@@ -1,17 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Nav = () => {
+  const navigate = useNavigate();
   async function logout () {
     const response = await fetch('http://localhost:5005/admin/auth/logout', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+        Authorization: `${localStorage.getItem('token')}`
       }
     });
     const data = await response.json();
     console.log(data);
     localStorage.removeItem('token');
+    navigate('/');
   }
 
   return (
