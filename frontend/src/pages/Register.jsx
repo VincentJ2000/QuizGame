@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { checkToken } from './Refresh';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import Button from './Button';
+import Button from '../components/Button';
 import { teal } from '@mui/material/colors';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
