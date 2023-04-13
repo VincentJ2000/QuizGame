@@ -6,10 +6,12 @@ import Typography from '@mui/material/Typography';
 function Button (props) {
   return <Fab
     sx={{
-      width: '150px',
-      marginLeft: '30px',
-      marginRight: '30px',
-      bgcolor: teal.A100
+      width: props.full ? '100%' : '150px',
+      marginLeft: props.full ? '0px' : '30px',
+      marginRight: props.full ? '0px' : '30px',
+      marginTop: props.full ? '10px' : 0,
+      bgcolor: props.bgcolor ? props.bgcolor : teal.A200,
+      color: props.color ? props.color : 'common.black',
     }}
     variant="extended"
     {...props}

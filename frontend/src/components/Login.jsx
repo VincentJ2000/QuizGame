@@ -1,11 +1,18 @@
 import React from 'react';
-import Nav from './Nav';
 import { useNavigate } from 'react-router-dom';
 import { checkToken } from './Refresh';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from './Button'
+import { teal } from '@mui/material/colors';
 
 const Login = ({ onSuccess }) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [errorMessage, setErrorMessage] = React.useState(null);
   const navigate = useNavigate();
   checkToken('/dashboard');
 
@@ -18,23 +25,48 @@ const Login = ({ onSuccess }) => {
       body: JSON.stringify({
         email,
         password,
-      })
+      }),
     });
     const data = await response.json();
-    onSuccess(data.token);
-    navigate('/dashboard')
+    if (data.error) {
+      setErrorMessage(data.error);
+    } else {
+      onSuccess(data.token);
+      navigate('/dashboard');
+    }
   }
 
   return (
-    <>
-        <Nav />
-        <hr />
-        Login
-        Email: <input value={email} onChange={(e) => setEmail(e.target.value)} /><br />
-        Password: <input value={password} onChange={(e) => setPassword(e.target.value)} /><br />
-        <button onClick={login}>Login</button>
-    </>
-  )
+    <Box sx={{ height: '100vh', backgroundColor: '#00695c', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Container maxWidth="sm" sx={{ backgroundColor: 'common.white', p: 4, borderRadius: 2 }}>
+        {errorMessage && (
+        <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            {errorMessage}
+        </Alert>
+        )}
+        <TextField
+        fullWidth
+        variant="outlined"
+        margin="normal"
+        label="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+        fullWidth
+        variant="outlined"
+        margin="normal"
+        label="Password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button full="true" color="common.white" bgcolor={teal[800]} onClick={login}>Login</Button>
+        <Button full="true" bgcolor="#e0f2f1" onClick={() => { navigate('/register'); }}>Go To Register</Button>
+      </Container>
+    </Box>
+  );
 };
 
 export default Login;
