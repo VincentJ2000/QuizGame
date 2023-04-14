@@ -1,8 +1,10 @@
 import React from 'react';
-import Home from './components/Home'
-import Register from './components/Register'
-import Login from './components/Login'
-import Dashboard from './components/Dashboard'
+import Home from './pages/Home'
+import Register from './pages/Register'
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import EditQuiz from './pages/EditQuiz';
+import EditQuestion from './pages/EditQuestion';
 import {
   BrowserRouter,
   Routes,
@@ -36,6 +38,8 @@ function App () {
           <Route path="/dashboard" element={<Dashboard token={token} />} />
           <Route path="/register" element={<Register onSuccess={manageTokenSet} />} />
           <Route path="/login" element={<Login onSuccess={manageTokenSet} />} />
+          <Route path="/edit" element={<EditQuiz />} />
+          <Route path="/editQuestion" element={<EditQuestion />} />
           {/* <Route path="/profile/:name" element={<Profile />} /> */}
         </Routes>
       </BrowserRouter>

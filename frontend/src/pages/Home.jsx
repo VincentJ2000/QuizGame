@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from './Button'
+import Button from '../components/Button'
 import { Box, Typography } from '@mui/material'
 import PsychologyOutlinedIcon from '@mui/icons-material/PsychologyOutlined';
 import { useNavigate } from 'react-router-dom';

@@ -6,7 +6,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import Button from './Button'
+import Button from '../components/Button'
 import { teal } from '@mui/material/colors';
 
 const Login = ({ onSuccess }) => {
