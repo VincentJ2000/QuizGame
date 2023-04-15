@@ -24,11 +24,10 @@ const EditQuiz = () => {
 
   const [update, setUpdate] = useState(false);
   const [quizDetails, setQuizDetails] = useState({});
+  const [questionList, setQuestionList] = useState([]);
   const [quizName, setQuizName] = useState('');
   const [quizThumbnail, setQuizThumbnail] = useState('');
   const [previewThumbnail, setPreviewThumbnail] = useState(null);
-  const questionID = 1;
-  //   const [questionID, setQuestionID] = useState(1);
 
   const fetchQuiz = async () => {
     const response = await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
@@ -41,6 +40,7 @@ const EditQuiz = () => {
     const data = await response.json();
     console.log(data);
     setQuizDetails(data);
+    setQuestionList(data.questions);
     setQuizName(data.name);
     setPreviewThumbnail(data.thumbnail);
   };
@@ -74,7 +74,7 @@ const EditQuiz = () => {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify({
-        questions: quizDetails.questions,
+        questions: questionList,
         name: quizName,
         thumbnail: previewThumbnail,
       })
@@ -83,7 +83,7 @@ const EditQuiz = () => {
   };
 
   const addQuestion = () => {
-    navigate(`/edit/${quizID}/${questionID}`);
+    navigate(`/edit/${quizID}/${questionList.length + 1}`);
   };
 
   const editQuestion = (questionID) => {
@@ -91,7 +91,12 @@ const EditQuiz = () => {
   };
 
   const deleteQuestion = (questionID) => {
-
+    const index = questionID - 1;
+    const newQuestions = questionList;
+    newQuestions.splice(index, 1);
+    console.log('new', newQuestions);
+    setQuestionList(newQuestions);
+    updateQuiz();
   };
 
   const attachmentComponent = (attachmentType, attachment) => {
@@ -173,7 +178,7 @@ const EditQuiz = () => {
                 </Grid>
             </Grid>
             <Button variant="contained" fullWidth onClick={addQuestion}>Add Question</Button>
-            {quizDetails.questions && quizDetails.questions.map((data) => (
+            {questionList && questionList.map((data) => (
               <Card key={data.id} sx={{ width: '100%' }}>
                 <CardHeader
                   title={'Question ' + data.id + ': ' + data.question}

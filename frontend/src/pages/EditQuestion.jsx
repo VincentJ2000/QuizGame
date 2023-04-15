@@ -34,7 +34,7 @@ const EditQuestion = () => {
   const [points, setPoints] = useState(1);
   const [attachmentType, setAttachmentType] = useState('none');
   const [imageAttachment, setImageAttachment] = useState('');
-  const [attachment, setAttachment] = useState(null);
+  const [attachment, setAttachment] = useState('');
 
   const fetchQuiz = async () => {
     const response = await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
@@ -166,6 +166,10 @@ const EditQuestion = () => {
     navigate('/edit/' + quizID);
   }
 
+  const goToQuiz = () => {
+    navigate('/edit/' + quizID);
+  }
+
   return (
     <>
       <Navbar />
@@ -289,11 +293,20 @@ const EditQuestion = () => {
             </Grid>
           ))}
         </Grid>
-        <Grid justifyContent="center">
-          {(answerCount < 6) ? <Button variant="outlined" onClick={addMoreAnswers}>Add more answers</Button> : null}
-          {(answerCount > 2) ? <Button variant="outlined" color="error" onClick={delMoreAnswers}>Delete last answer option</Button> : null}
+        <Grid container spacing={2} justifyContent="center">
+          {(answerCount < 6) ? <Grid item xs={6}><Button fullWidth variant="outlined" onClick={addMoreAnswers}>Add more answers</Button></Grid> : null}
+          {(answerCount > 2) ? <Grid item xs={6}><Button fullWidth variant="outlined" color="error" onClick={delMoreAnswers}>Delete last answer option</Button></Grid> : null}
         </Grid>
-        <Button variant='contained' onClick={addQuestion}>Add Question</Button>
+        <Grid
+          container
+          spacing={2}
+          sx={{ marginTop: '1rem' }}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Grid item><Button variant='contained' color='success' onClick={goToQuiz}>Go back to Quiz</Button></Grid>
+          <Grid item><Button variant='contained' onClick={addQuestion}>Add Question</Button></Grid>
+        </Grid>
       </Container>
     </>
   )
