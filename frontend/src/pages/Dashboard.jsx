@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
+<<<<<<< HEAD
 import Navbar from '../components/Navbar';
 import apiCall from './API';
 import Alert from '@mui/material/Alert';
@@ -10,28 +11,57 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+=======
+import PsychologyOutlinedIcon from '@mui/icons-material/PsychologyOutlined';
+>>>>>>> sheina
 import {
   Grid,
   Card,
   CardMedia,
   CardContent,
   CardActions,
+<<<<<<< HEAD
   Typography
+=======
+  Typography,
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  DialogTitle,
+  AppBar
+>>>>>>> sheina
 } from '@mui/material'
 
 const Dashboard = ({ token }) => {
   const navigate = useNavigate();
   const [quizList, setQuizList] = useState([]);
+<<<<<<< HEAD
   const [quiz, setQuiz] = useState({});
   const [errorMessage, setErrorMessage] = React.useState(null);
+=======
+  const [gameModal, setGameModal] = useState(false);
+  const [newGame, setNewGame] = useState('');
+>>>>>>> sheina
 
-  useEffect(() => {
-    apiCall('admin/quiz', 'GET', {}, '')
-      .then((data) => {
-        console.log(data);
-        setQuizList(data.quizzes);
-      })
-  }, []);
+  const fetchAllQuizzes = async () => {
+    const response = await fetch('http://localhost:5005/admin/quiz/', {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      }
+    });
+    const data = await response.json();
+    console.log(data);
+    setQuizList(data.quizzes);
+  }
+
+  useEffect(async () => {
+    await fetchAllQuizzes();
+  }, [gameModal]);
 
   // startQuiz popup
   const [open, setOpen] = React.useState(false);
@@ -111,10 +141,53 @@ const Dashboard = ({ token }) => {
     }
   }
   const editQuiz = (quizID) => {
-    navigate('/edit', { id: quizID });
+    navigate('/edit/' + quizID);
   };
 
-  const deleteQuiz = (quizID) => {
+  const deleteQuiz = async (quizID) => {
+    await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    await fetchAllQuizzes();
+  };
+
+  async function logout () {
+    await fetch('http://localhost:5005/admin/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      }
+    });
+    localStorage.removeItem('token');
+    navigate('/');
+  }
+
+  const handleOpenModal = () => {
+    setGameModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setGameModal(false);
+  };
+
+  const addQuiz = async () => {
+    await fetch('http://localhost:5005/admin/quiz/new', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({
+        name: newGame
+      }),
+    });
+    await fetchAllQuizzes();
+    handleCloseModal();
   };
 
   return (
@@ -173,7 +246,7 @@ const Dashboard = ({ token }) => {
         {quizList.map((quiz) => (
           <Grid
             item
-            key={quiz.id}
+            key={index}
             xs={12}
             sm={6}
             md={4}
@@ -199,25 +272,6 @@ const Dashboard = ({ token }) => {
           </Grid>
         ))}
       </Grid>
-      {/* <Box>
-        <Card sx={{ maxWidth: 345 }}>
-          <CardMedia
-            component="img"
-            alt="dog"
-            height="140"
-            image={dogPic}
-          />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">Title</Typography>
-            <Typography variant="body2" color="text.secondary">Time</Typography>
-          </CardContent>
-          <CardActions sx={{ padding: '1rem' }}>
-            <Button sx={{ bgcolor: '#66bb6a', color: 'white' }} onClick={startQuiz(quizID)}>Start Quiz</Button>
-            <Button sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={editQuiz(quizID)}>Edit Quiz</Button>
-            <Button sx={{ bgcolor: '#ef5350', color: 'white' }} onClick={deleteQuiz(quizID)}>Delete Quiz</Button>
-          </CardActions>
-        </Card>
-      </Box> */}
     </>
   )
 }
