@@ -70,11 +70,15 @@ const Navbar = () => {
     handleCloseModal();
   };
 
+  const toDashboard = () => {
+    navigate('/dashboard');
+  }
+
   return (
     <>
         <AppBar position="static" elevation={0} sx={{ bgcolor: '#00695c', marginBottom: '1rem' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box sx={{ display: 'flex' }}>
+                <Box sx={{ display: 'flex' }} onClick={toDashboard}>
                     <Typography variant="h1" sx={{ fontSize: '3rem', color: 'white', marginLeft: '1rem', marginTop: '1rem' }}> BigBrain</Typography>
                     <PsychologyOutlinedIcon sx={{ fontSize: 80, color: 'white', marginBottom: '1rem' }} />
                 </Box>

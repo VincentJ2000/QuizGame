@@ -49,7 +49,15 @@ const Dashboard = ({ token }) => {
     navigate('/edit/' + quizID);
   };
 
-  const deleteQuiz = (quizID) => {
+  const deleteQuiz = async (quizID) => {
+    await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    await fetchAllQuizzes();
   };
 
   async function logout () {

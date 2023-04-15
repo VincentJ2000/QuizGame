@@ -1,48 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
   Grid,
   TextField,
   Button,
-  Radio,
-  RadioGroup,
   FormControlLabel,
-  FormLabel,
-  FormGroup,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
   Checkbox
 } from '@mui/material'
 
 const EditQuestion = () => {
+  const navigate = useNavigate();
   const params = useParams();
   const quizID = params.quizID;
   const questionID = params.questionID;
 
   const [quizDetails, setQuizDetails] = useState({});
-
   const [questionType, setQuestionType] = useState('SC');
   const [question, setQuestion] = useState('');
-  const [answer1, setAnswer1] = useState('');
-  const [answer2, setAnswer2] = useState('');
-  const [answer3, setAnswer3] = useState('');
-  const [answer4, setAnswer4] = useState('');
-  const [answer5, setAnswer5] = useState('');
-  const [answer6, setAnswer6] = useState('');
-  const [timeLimit, setTimeLimit] = useState('');
-  const [points, setPoints] = useState('');
-  const [attachmentType, setAttachmentType] = useState('image');
+  const [answerCount, setAnswerCount] = useState(2);
+  const [answerList, setAnswerList] = useState([
+    { id: 1, answer: '', correct: false },
+    { id: 2, answer: '', correct: false },
+  ]);
+  const [timeLimit, setTimeLimit] = useState(30);
+  const [points, setPoints] = useState(1);
+  const [attachmentType, setAttachmentType] = useState('none');
   const [attachment, setAttachment] = useState('');
-  const [SCAnswer, setSCAnswer] = useState('');
-  const [MCAnswer, setMCAnswer] = React.useState({
-    answer1: false,
-    answer2: false,
-    answer3: false,
-    answer4: false,
-    answer5: false,
-    answer6: false,
-  });
 
   const fetchQuiz = async () => {
     const response = await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
@@ -61,9 +51,101 @@ const EditQuestion = () => {
     await fetchQuiz();
   }, []);
 
-  const handleMCAnswer = (event) => {
-    setMCAnswer({ ...MCAnswer, [event.target.name]: event.target.checked })
+  const handleSetAnswer = (event, index) => {
+    const newList = [...answerList];
+    newList[index].answer = event.target.value;
+    setAnswerList(newList);
   };
+
+  const handleCorrectAnswer = (event, index) => {
+    if (questionType === 'SC') {
+      const check = answerList.filter((data) => data.correct);
+      if (check.length === 1) {
+        const newList = [...answerList];
+        newList[check[0].id - 1].correct = false;
+        setAnswerList(newList);
+      }
+    }
+    const newList = [...answerList];
+    newList[index].correct = event.target.checked;
+    setAnswerList(newList);
+  }
+
+  const addMoreAnswers = () => {
+    if (answerCount < 6) {
+      const newCount = answerCount + 1;
+      setAnswerCount(newCount);
+      setAnswerList([...answerList, { id: newCount, answer: '', correct: false }]);
+    }
+  };
+
+  const delMoreAnswers = () => {
+    if (answerCount > 2) {
+      const newCount = answerCount - 1;
+      setAnswerCount(newCount);
+      const newList = answerList;
+      newList.pop();
+      setAnswerList(newList);
+    }
+  }
+
+  const uploadAttachment = () => {
+    if (attachmentType !== 'none') {
+      if (attachmentType === 'image') {
+        return (<Grid item>
+                  <Typography>Upload Image File</Typography>
+                  <input
+                    type="file"
+                    name="attachment"
+                    id="attachment"
+                    onChange={(e) => setAttachment(e.target.value)}
+                  />
+                </Grid>)
+      } else if (attachmentType === 'video') {
+        return (<Grid item>
+                  <TextField
+                      required
+                      id="attachment"
+                      label="Video URL"
+                      value={attachment}
+                      onChange={(e) => setAttachment(e.target.value)}
+                      type="text"
+                      fullWidth
+                      variant="standard"
+                  />
+              </Grid>)
+      }
+    }
+  };
+
+  const addQuestion = async () => {
+    const newQuestion = quizDetails.questions;
+    newQuestion.push({
+      id: questionID,
+      type: questionType,
+      question,
+      answerList,
+      timeLimit,
+      points,
+      attachmentType,
+      attachment
+    });
+
+    const response = await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({
+        questions: newQuestion,
+        name: quizDetails.name,
+        thumbnail: quizDetails.thumbnail,
+      })
+    });
+    console.log(response.json());
+    navigate('/edit/' + quizID);
+  }
 
   return (
     <>
@@ -78,58 +160,75 @@ const EditQuestion = () => {
         }}
       >
         <Typography variant="h4" component="div" align="center">Question {questionID} of {quizDetails.name}</Typography>
-        <Grid container spacing={2} justifyContent="center">
-            <Grid item xs={3}>
-                <FormLabel id="question-type">Question Type</FormLabel>
-                <RadioGroup
-                    aria-labelledby="question-type"
-                    name="question-type"
-                    value={questionType}
-                    onChange={(e) => { setQuestionType(e.target.value) }}
-                >
-                    <FormControlLabel value="SC" control={<Radio />} label="Single Choice" />
-                    <FormControlLabel value="MC" control={<Radio />} label="Multiple Choice" />
-                </RadioGroup>
-            </Grid>
-            <Grid item xs={3}>
-                <FormLabel id="attachment-type">Attachment Type</FormLabel>
-                <RadioGroup
-                    aria-labelledby="attachment-type"
-                    name="attachment-type"
-                    value={attachmentType}
-                    onChange={(e) => { setAttachmentType(e.target.value) }}
-                >
-                    <FormControlLabel value="image" control={<Radio />} label="Image" />
-                    <FormControlLabel value="video" control={<Radio />} label="Video" />
-                </RadioGroup>
-            </Grid>
-            {(attachmentType === 'image')
-              ? (
-                <Grid item>
-                    <Typography>Upload Image File</Typography>
-                    <input
-                    type="file"
-                    name="attachment"
-                    id="attachment"
-                    onChange={(e) => setAttachment(e.target.value)}
-                    />
-                </Grid>
-                )
-              : (
-                <Grid item>
-                    <TextField
-                        required
-                        id="attachment"
-                        label="Video URL"
-                        value={attachment}
-                        onChange={(e) => setAttachment(e.target.value)}
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                    />
-                </Grid>
-                )}
+        <Grid container spacing={1} direction="row" alignItems="center" justifyContent="center">
+          <Grid item xs={3}>
+            <FormControl fullWidth>
+              <InputLabel id="questionType">Question Type</InputLabel>
+              <Select
+                labelId="questionType-label"
+                id="questionType-select"
+                value={questionType}
+                label="Question Type"
+                onChange={(e) => setQuestionType(e.target.value)}
+              >
+                <MenuItem value='SC'>Single Choice</MenuItem>
+                <MenuItem value='MC'>Multiple Choice</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={3}>
+            <FormControl fullWidth>
+              <InputLabel id="timeLimit">Time Limit</InputLabel>
+              <Select
+                labelId="timeLimit-label"
+                id="timeLimit-select"
+                value={timeLimit}
+                label="Time Limit"
+                onChange={(e) => setTimeLimit(e.target.value)}
+              >
+                <MenuItem value={30}>30 seconds</MenuItem>
+                <MenuItem value={60}>1 minute</MenuItem>
+                <MenuItem value={90}>1 minute 30 seconds</MenuItem>
+                <MenuItem value={120}>2 minutes</MenuItem>
+                <MenuItem value={180}>3 minutes</MenuItem>
+                <MenuItem value={240}>4 minutes</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={3}>
+            <FormControl fullWidth>
+              <InputLabel id="points">Points</InputLabel>
+              <Select
+                labelId="points-label"
+                id="points-select"
+                value={points}
+                label="Points"
+                onChange={(e) => setPoints(e.target.value)}
+              >
+                <MenuItem value={1}>One</MenuItem>
+                <MenuItem value={2}>Two</MenuItem>
+                <MenuItem value={3}>Three</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={3}>
+            <FormControl fullWidth>
+              <InputLabel id="attachmentType">Attachment Type</InputLabel>
+              <Select
+                labelId="attachmentType-label"
+                id="attachmentType-select"
+                value={attachmentType}
+                label="Attachment Type"
+                onChange={(e) => setAttachmentType(e.target.value)}
+              >
+                <MenuItem value='none'>None</MenuItem>
+                <MenuItem value='image'>Image</MenuItem>
+                <MenuItem value='video'>Video</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
+        {uploadAttachment()}
         <TextField
             required
             id="question"
@@ -140,125 +239,42 @@ const EditQuestion = () => {
             fullWidth
             variant="standard"
         />
-        <TextField
-            required
-            id="answer1"
-            label="Answer 1"
-            value={answer1}
-            onChange={(e) => setAnswer1(e.target.value)}
-            type="text"
-            fullWidth
-            variant="standard"
-        />
-        <TextField
-            required
-            id="answer2"
-            label="Answer 2"
-            value={answer2}
-            onChange={(e) => setAnswer2(e.target.value)}
-            type="text"
-            fullWidth
-            variant="standard"
-        />
-        <TextField
-            id="answer3"
-            label="Answer 3"
-            value={answer3}
-            onChange={(e) => setAnswer3(e.target.value)}
-            type="text"
-            fullWidth
-            variant="standard"
-        />
-        <TextField
-            id="answer4"
-            label="Answer 4"
-            value={answer4}
-            onChange={(e) => setAnswer4(e.target.value)}
-            type="text"
-            fullWidth
-            variant="standard"
-        />
-        <TextField
-            id="answer5"
-            label="Answer 5"
-            value={answer5}
-            onChange={(e) => setAnswer5(e.target.value)}
-            type="text"
-            fullWidth
-            variant="standard"
-        />
-        <TextField
-            id="answer6"
-            label="Answer 6"
-            value={answer6}
-            onChange={(e) => setAnswer6(e.target.value)}
-            type="text"
-            fullWidth
-            variant="standard"
-        />
-        <Grid container spacing={5} justifyContent="center" alignItems="center">
-            <Grid item><Typography>Correct Answer: </Typography></Grid>
-            <Grid item>
-            {(questionType === 'SC')
-              ? (
-                <RadioGroup
-                    row
-                    required
-                    name="answer-group"
-                    value={SCAnswer}
-                    onChange={(e) => setSCAnswer(e.target.value)}
-                >
-                    <FormControlLabel value="1" control={<Radio />} label="1" />
-                    <FormControlLabel value="2" control={<Radio />} label="2" />
-                    {(answer3 !== '')
-                      ? (<FormControlLabel value="3" control={<Radio />} label="3" />)
-                      : (<FormControlLabel disabled value="3" control={<Radio />} label="3" />)}
-                    {(answer4 !== '')
-                      ? (<FormControlLabel value="4" control={<Radio />} label="4" />)
-                      : (<FormControlLabel disabled value="4" control={<Radio />} label="4" />)}
-                    {(answer5 !== '')
-                      ? (<FormControlLabel value="5" control={<Radio />} label="5" />)
-                      : (<FormControlLabel disabled value="5" control={<Radio />} label="5" />)}
-                    {(answer6 !== '')
-                      ? (<FormControlLabel value="6" control={<Radio />} label="6" />)
-                      : (<FormControlLabel disabled value="6" control={<Radio />} label="6" />)}
-                </RadioGroup>
-                )
-              : (
-                <FormGroup row required>
-                    <FormControlLabel
-                        control={<Checkbox checked={MCAnswer.answer1} onChange={handleMCAnswer} name="answer1" />}
-                        label="1"
-                    />
-                    <FormControlLabel
-                        control={<Checkbox checked={MCAnswer.answer2} onChange={handleMCAnswer} name="answer2" />}
-                        label="2"
-                    />
-                </FormGroup>
-                )}
+        <Grid
+          container
+          spacing={3}
+          sx={{ marginTop: '1rem' }}
+          justifyContent="center"
+          alignItems="center"
+        >
+          {answerList.map((data, index) => (
+            <Grid item xs={6} key={index}>
+              <Grid container spacing={1} direction="row" alignItems="center" sx={{ paddingBottom: '1rem', border: '2px solid teal' }}>
+                <Grid item xs={9} sm={10}>
+                    <TextField
+                      required
+                      id={toString(data.id)}
+                      label={'Answer ' + data.id}
+                      value={data.answer}
+                      onChange={(e) => handleSetAnswer(e, index)}
+                      type="text"
+                      fullWidth
+                      variant="standard"
+                  />
+                </Grid>
+                <Grid item xs={1}>
+                  <FormControlLabel
+                      control={<Checkbox checked={data.correct} onChange={(e) => handleCorrectAnswer(e, index)} id={toString(data.id)} size="large" />}
+                  />
+                </Grid>
+              </Grid>
             </Grid>
+          ))}
         </Grid>
-        <TextField
-            required
-            id="timeLimit"
-            label="Time Limit"
-            value={timeLimit}
-            onChange={(e) => setTimeLimit(e.target.value)}
-            type="text"
-            fullWidth
-            variant="standard"
-        />
-        <TextField
-            required
-            id="points"
-            label="Points"
-            value={points}
-            onChange={(e) => setPoints(e.target.value)}
-            type="text"
-            fullWidth
-            variant="standard"
-        />
-        <Button>Add Question</Button>
+        <Grid justifyContent="center">
+          {(answerCount < 6) ? <Button variant="outlined" onClick={addMoreAnswers}>Add more answers</Button> : null}
+          {(answerCount > 2) ? <Button variant="outlined" color="error" onClick={delMoreAnswers}>Delete last answer option</Button> : null}
+        </Grid>
+        <Button variant='contained' onClick={addQuestion}>Add Question</Button>
       </Container>
     </>
   )
