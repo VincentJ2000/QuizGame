@@ -6,8 +6,16 @@ import {
   Typography,
   Grid,
   TextField,
-  Button
+  Button,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  CardHeader,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material'
+import fileToDataUrl from './helpers.js';
 
 const EditQuiz = () => {
   const navigate = useNavigate();
@@ -18,6 +26,7 @@ const EditQuiz = () => {
   const [quizDetails, setQuizDetails] = useState({});
   const [quizName, setQuizName] = useState('');
   const [quizThumbnail, setQuizThumbnail] = useState('');
+  const [previewThumbnail, setPreviewThumbnail] = useState(null);
   const questionID = 1;
   //   const [questionID, setQuestionID] = useState(1);
 
@@ -33,12 +42,29 @@ const EditQuiz = () => {
     console.log(data);
     setQuizDetails(data);
     setQuizName(data.name);
-    setQuizThumbnail(data.thumbnail);
-  }
+    setPreviewThumbnail(data.thumbnail);
+  };
 
   useEffect(async () => {
     await fetchQuiz();
   }, [update]);
+
+  const handleThumbnail = (e) => {
+    setQuizThumbnail(e.target.files[0]);
+  };
+
+  useEffect(() => {
+    if (quizThumbnail !== '') {
+      fileToDataUrl(quizThumbnail)
+        .then((data) => {
+          setPreviewThumbnail(data);
+        })
+        .catch(() => {
+          alert('Base64 error.');
+          setQuizThumbnail('');
+        })
+    }
+  }, [quizThumbnail]);
 
   const updateQuiz = async () => {
     await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
@@ -50,15 +76,49 @@ const EditQuiz = () => {
       body: JSON.stringify({
         questions: quizDetails.questions,
         name: quizName,
-        thumbnail: quizThumbnail,
+        thumbnail: previewThumbnail,
       })
     });
     setUpdate(!update);
-  }
+  };
 
   const addQuestion = () => {
     navigate(`/edit/${quizID}/${questionID}`);
-  }
+  };
+
+  const editQuestion = (questionID) => {
+
+  };
+
+  const deleteQuestion = (questionID) => {
+
+  };
+
+  const attachmentComponent = (attachmentType, attachment) => {
+    if (attachmentType !== 'none') {
+      if (attachmentType === 'image') {
+        return (<CardMedia
+          component="img"
+          alt="img"
+          height="250"
+          image={attachment}
+        />)
+      } else if (attachmentType === 'video') {
+        return (<CardMedia
+          component="video"
+          alt="video"
+          height="140"
+          image={attachment}
+        />)
+      }
+    }
+    return (<CardMedia
+      component="img"
+      alt="img"
+      height="250"
+      image='https://t4.ftcdn.net/jpg/02/07/87/79/240_F_207877921_BtG6ZKAVvtLyc5GWpBNEIlIxsffTtWkv.jpg'
+    />)
+  };
 
   return (
     <>
@@ -76,9 +136,9 @@ const EditQuiz = () => {
             <Grid container spacing={5} justifyContent="center">
                 <Grid item xs={5}>
                     <img
-                        src={(quizThumbnail === null || quizThumbnail === '')
+                        src={(previewThumbnail === null || previewThumbnail === '')
                           ? 'https://t4.ftcdn.net/jpg/02/07/87/79/240_F_207877921_BtG6ZKAVvtLyc5GWpBNEIlIxsffTtWkv.jpg'
-                          : quizThumbnail}
+                          : previewThumbnail}
                         alt="Quiz Thumbnail"
                         loading="lazy"
                         style={{ width: '100%', maxHeight: '250px' }}
@@ -100,10 +160,10 @@ const EditQuiz = () => {
                         <Grid item>
                             <Typography>Upload Image File</Typography>
                             <input
-                            type="file"
-                            name="quizThumbnail"
-                            id="quizThumbnail"
-                            onChange={(e) => setQuizThumbnail(e.target.value)}
+                              type="file"
+                              name="quizThumbnail"
+                              id="quizThumbnail"
+                              onChange={handleThumbnail}
                             />
                         </Grid>
                         <Grid item>
@@ -113,6 +173,53 @@ const EditQuiz = () => {
                 </Grid>
             </Grid>
             <Button variant="contained" fullWidth onClick={addQuestion}>Add Question</Button>
+            {quizDetails.questions && quizDetails.questions.map((data) => (
+              <Card key={data.id} sx={{ width: '100%' }}>
+                <CardHeader
+                  title={'Question ' + data.id + ': ' + data.question}
+                  subheader={'Points: ' + data.points + ', Time Limit: ' + data.timeLimit}
+                />
+                <CardContent>
+                  <Grid
+                    container
+                    spacing={2}
+                  >
+                    <Grid item xs={6}>{attachmentComponent(data.attachmentType, data.attachment)}</Grid>
+                    <Grid item xs={6}>
+                      <Grid container >
+                        <Typography gutterBottom variant="h6" component="div">Answer List</Typography>
+                        <Grid
+                          container
+                          spacing={3}
+                          sx={{ marginTop: '0.5rem' }}
+                          justifyContent="center"
+                          alignItems="center"
+                        >
+                        {data.answerList.map((ans, index) => (
+                          <Grid item xs={6} key={index}>
+                            <Grid container spacing={1} direction="row" alignItems="center" sx={{ paddingBottom: '1rem', border: '2px solid teal' }}>
+                              <Grid item xs={8}>
+                                  <Typography key={ans.id}>{ans.answer}</Typography>
+                              </Grid>
+                              <Grid item xs={1}>
+                                <FormControlLabel
+                                    control={<Checkbox checked={ans.correct} key={ans.id} size="large" />}
+                                />
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                        ))}
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+                <CardActions sx={{ padding: '1rem', justifyContent: 'center' }}>
+                  <Button fullWidth sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={() => editQuestion(data.id)}>Edit Question</Button>
+                  <Button fullWidth sx={{ bgcolor: '#ef5350', color: 'white' }} onClick={() => deleteQuestion(data.id)}>Delete Question</Button>
+                </CardActions>
+              </Card>
+            ))}
         </Container>
     </>
   )

@@ -133,7 +133,7 @@ const Dashboard = ({ token }) => {
               </Box>
           </Box>
       </AppBar>
-      <Grid container spacing={5} alignItems="flex-end">
+      <Grid container spacing={5} alignItems="flex-end" justifyContent="center" sx={{ padding: '1rem' }}>
         {quizList.map((quiz, index) => (
           <Grid
             item

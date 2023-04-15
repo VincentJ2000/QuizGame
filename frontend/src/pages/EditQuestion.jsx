@@ -14,6 +14,7 @@ import {
   MenuItem,
   Checkbox
 } from '@mui/material'
+import fileToDataUrl from './helpers.js';
 
 const EditQuestion = () => {
   const navigate = useNavigate();
@@ -32,7 +33,8 @@ const EditQuestion = () => {
   const [timeLimit, setTimeLimit] = useState(30);
   const [points, setPoints] = useState(1);
   const [attachmentType, setAttachmentType] = useState('none');
-  const [attachment, setAttachment] = useState('');
+  const [imageAttachment, setImageAttachment] = useState('');
+  const [attachment, setAttachment] = useState(null);
 
   const fetchQuiz = async () => {
     const response = await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
@@ -69,7 +71,7 @@ const EditQuestion = () => {
     const newList = [...answerList];
     newList[index].correct = event.target.checked;
     setAnswerList(newList);
-  }
+  };
 
   const addMoreAnswers = () => {
     if (answerCount < 6) {
@@ -87,7 +89,24 @@ const EditQuestion = () => {
       newList.pop();
       setAnswerList(newList);
     }
-  }
+  };
+
+  const handleAttachment = (e) => {
+    setImageAttachment(e.target.files[0]);
+  };
+
+  useEffect(() => {
+    if (imageAttachment !== '') {
+      fileToDataUrl(imageAttachment)
+        .then((data) => {
+          setAttachment(data);
+        })
+        .catch(() => {
+          alert('Base64 error.');
+          setImageAttachment('');
+        })
+    }
+  }, [imageAttachment]);
 
   const uploadAttachment = () => {
     if (attachmentType !== 'none') {
@@ -98,7 +117,7 @@ const EditQuestion = () => {
                     type="file"
                     name="attachment"
                     id="attachment"
-                    onChange={(e) => setAttachment(e.target.value)}
+                    onChange={handleAttachment}
                   />
                 </Grid>)
       } else if (attachmentType === 'video') {
