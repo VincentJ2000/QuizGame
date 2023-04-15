@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
-<<<<<<< HEAD
 import Navbar from '../components/Navbar';
-import apiCall from './API';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Dialog from '@mui/material/Dialog';
@@ -11,40 +9,20 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-=======
-import PsychologyOutlinedIcon from '@mui/icons-material/PsychologyOutlined';
->>>>>>> sheina
 import {
   Grid,
   Card,
   CardMedia,
   CardContent,
   CardActions,
-<<<<<<< HEAD
   Typography
-=======
-  Typography,
-  Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  TextField,
-  DialogTitle,
-  AppBar
->>>>>>> sheina
 } from '@mui/material'
 
 const Dashboard = ({ token }) => {
   const navigate = useNavigate();
   const [quizList, setQuizList] = useState([]);
-<<<<<<< HEAD
   const [quiz, setQuiz] = useState({});
   const [errorMessage, setErrorMessage] = React.useState(null);
-=======
-  const [gameModal, setGameModal] = useState(false);
-  const [newGame, setNewGame] = useState('');
->>>>>>> sheina
 
   const fetchAllQuizzes = async () => {
     const response = await fetch('http://localhost:5005/admin/quiz/', {
@@ -61,7 +39,7 @@ const Dashboard = ({ token }) => {
 
   useEffect(async () => {
     await fetchAllQuizzes();
-  }, [gameModal]);
+  }, []);
 
   // startQuiz popup
   const [open, setOpen] = React.useState(false);
@@ -155,40 +133,40 @@ const Dashboard = ({ token }) => {
     await fetchAllQuizzes();
   };
 
-  async function logout () {
-    await fetch('http://localhost:5005/admin/auth/logout', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      }
-    });
-    localStorage.removeItem('token');
-    navigate('/');
-  }
+  // async function logout () {
+  //   await fetch('http://localhost:5005/admin/auth/logout', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-type': 'application/json',
+  //       Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //     }
+  //   });
+  //   localStorage.removeItem('token');
+  //   navigate('/');
+  // }
 
-  const handleOpenModal = () => {
-    setGameModal(true);
-  };
+  // const handleOpenModal = () => {
+  //   setGameModal(true);
+  // };
 
-  const handleCloseModal = () => {
-    setGameModal(false);
-  };
+  // const handleCloseModal = () => {
+  //   setGameModal(false);
+  // };
 
-  const addQuiz = async () => {
-    await fetch('http://localhost:5005/admin/quiz/new', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify({
-        name: newGame
-      }),
-    });
-    await fetchAllQuizzes();
-    handleCloseModal();
-  };
+  // const addQuiz = async () => {
+  //   await fetch('http://localhost:5005/admin/quiz/new', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-type': 'application/json',
+  //       Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //     },
+  //     body: JSON.stringify({
+  //       name: newGame
+  //     }),
+  //   });
+  //   await fetchAllQuizzes();
+  //   handleCloseModal();
+  // };
 
   return (
     <>
