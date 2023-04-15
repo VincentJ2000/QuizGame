@@ -201,16 +201,28 @@ const EditQuestion = () => {
             <Grid item>
             {(questionType === 'SC')
               ? (
-                    <RadioGroup
-                        row
-                        required
-                        name="answer-group"
-                        value={SCAnswer}
-                        onChange={(e) => setSCAnswer(e.target.value)}
-                    >
-                        <FormControlLabel value="1" control={<Radio />} label="1" />
-                        <FormControlLabel value="2" control={<Radio />} label="2" />
-                    </RadioGroup>
+                <RadioGroup
+                    row
+                    required
+                    name="answer-group"
+                    value={SCAnswer}
+                    onChange={(e) => setSCAnswer(e.target.value)}
+                >
+                    <FormControlLabel value="1" control={<Radio />} label="1" />
+                    <FormControlLabel value="2" control={<Radio />} label="2" />
+                    {(answer3 !== '')
+                      ? (<FormControlLabel value="3" control={<Radio />} label="3" />)
+                      : (<FormControlLabel disabled value="3" control={<Radio />} label="3" />)}
+                    {(answer4 !== '')
+                      ? (<FormControlLabel value="4" control={<Radio />} label="4" />)
+                      : (<FormControlLabel disabled value="4" control={<Radio />} label="4" />)}
+                    {(answer5 !== '')
+                      ? (<FormControlLabel value="5" control={<Radio />} label="5" />)
+                      : (<FormControlLabel disabled value="5" control={<Radio />} label="5" />)}
+                    {(answer6 !== '')
+                      ? (<FormControlLabel value="6" control={<Radio />} label="6" />)
+                      : (<FormControlLabel disabled value="6" control={<Radio />} label="6" />)}
+                </RadioGroup>
                 )
               : (
                 <FormGroup row required>
@@ -222,7 +234,7 @@ const EditQuestion = () => {
                         control={<Checkbox checked={MCAnswer.answer2} onChange={handleMCAnswer} name="answer2" />}
                         label="2"
                     />
-                    </FormGroup>
+                </FormGroup>
                 )}
             </Grid>
         </Grid>
