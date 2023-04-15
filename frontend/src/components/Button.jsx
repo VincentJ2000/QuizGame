@@ -10,6 +10,7 @@ function Button (props) {
       marginLeft: props.full ? '0px' : '30px',
       marginRight: props.full ? '0px' : '30px',
       marginTop: props.full ? '10px' : 0,
+      marginBottom: props.full ? 0 : '10px',
       bgcolor: props.bgcolor ? props.bgcolor : teal.A200,
       color: props.color ? props.color : 'common.black',
     }}

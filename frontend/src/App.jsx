@@ -7,6 +7,9 @@ import EditQuiz from './pages/EditQuiz';
 import EditQuestion from './pages/EditQuestion';
 import GameScreen from './pages/GameScreen';
 import GameResult from './pages/GameResult';
+import Game from './pages/Game';
+import GamePlay from './pages/GamePlay';
+
 import {
   BrowserRouter,
   Routes,
@@ -42,7 +45,9 @@ function App () {
           <Route path="/login" element={<Login onSuccess={manageTokenSet} />} />
           <Route path="/edit" element={<EditQuiz />} />
           <Route path="/editQuestion" element={<EditQuestion />} />
+          <Route path="/game" element={<Game />} />
           <Route path="/game/:sessionid" element={<GameScreen />} />
+          <Route path="/game/:sessionid/:playerid/play" element={<GamePlay/>} />
           <Route path="/game/result/:sessionid" element={<GameResult />} />
           {/* <Route path="/profile/:name" element={<Profile />} /> */}
         </Routes>
