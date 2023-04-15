@@ -81,6 +81,7 @@ const Navbar = () => {
                         <Button onClick={addQuiz}>Add Quiz</Button>
                       </DialogActions>
                     </Dialog>
+                    <Button onClick={() => { navigate('/game') }}>Join Game</Button>
                     <Button onClick={logout}>Logout</Button>
                 </Box>
             </Box>

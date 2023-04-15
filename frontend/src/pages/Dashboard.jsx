@@ -86,7 +86,6 @@ const Dashboard = ({ token }) => {
       })
   }
   // stop quiz
-
   const [open2, setOpen2] = React.useState(false);
   const handleClickOpen2 = () => {
     setOpen2(true);
