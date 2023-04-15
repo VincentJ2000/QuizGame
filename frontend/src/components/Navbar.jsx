@@ -14,7 +14,7 @@ import {
   AppBar
 } from '@mui/material'
 
-const Navbar = () => {
+const Navbar = ({ setQuizList }) => {
   const navigate = useNavigate();
   const [gameModal, setGameModal] = useState(false);
   const [newGame, setNewGame] = useState('');
@@ -29,6 +29,9 @@ const Navbar = () => {
     });
     const data = await response.json();
     console.log(data);
+    if (setQuizList) {
+      setQuizList(data.quizzes);
+    }
   }
 
   useEffect(async () => {

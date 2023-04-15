@@ -133,44 +133,9 @@ const Dashboard = ({ token }) => {
     await fetchAllQuizzes();
   };
 
-  // async function logout () {
-  //   await fetch('http://localhost:5005/admin/auth/logout', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-type': 'application/json',
-  //       Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //     }
-  //   });
-  //   localStorage.removeItem('token');
-  //   navigate('/');
-  // }
-
-  // const handleOpenModal = () => {
-  //   setGameModal(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setGameModal(false);
-  // };
-
-  // const addQuiz = async () => {
-  //   await fetch('http://localhost:5005/admin/quiz/new', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-type': 'application/json',
-  //       Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //     },
-  //     body: JSON.stringify({
-  //       name: newGame
-  //     }),
-  //   });
-  //   await fetchAllQuizzes();
-  //   handleCloseModal();
-  // };
-
   return (
     <>
-      <Navbar></Navbar>
+      <Navbar setQuizList={setQuizList}></Navbar>
       <Dialog
         fullWidth
         maxWidth='xs'
@@ -221,7 +186,7 @@ const Dashboard = ({ token }) => {
         </Alert>
       )}
       <Grid container spacing={5} alignItems="flex-end">
-        {quizList.map((quiz) => (
+        {quizList.map((quiz, index) => (
           <Grid
             item
             key={index}
