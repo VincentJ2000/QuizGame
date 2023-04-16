@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard'
 import EditQuiz from './pages/EditQuiz';
 import EditQuestion from './pages/EditQuestion';
 import GameScreen from './pages/GameScreen';
-import GameResult from './pages/GameResult';
+import AdminScreen from './pages/AdminScreen';
 import Game from './pages/Game';
 import GamePlay from './pages/GamePlay';
 
@@ -48,7 +48,7 @@ function App () {
           <Route path="/game" element={<Game />} />
           <Route path="/game/:sessionid" element={<GameScreen />} />
           <Route path="/game/:sessionid/:playerid/play" element={<GamePlay/>} />
-          <Route path="/game/result/:sessionid" element={<GameResult />} />
+          <Route path="/game/admin/:sessionid/:quizid" element={<AdminScreen />} />
           {/* <Route path="/profile/:name" element={<Profile />} /> */}
         </Routes>
       </BrowserRouter>

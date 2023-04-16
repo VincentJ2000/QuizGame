@@ -22,13 +22,12 @@ import {
 const Dashboard = ({ token }) => {
   const navigate = useNavigate();
   const [quizList, setQuizList] = useState([]);
-  const [quiz, setQuiz] = useState({});
+  const [quiz, setQuiz] = useState([]);
   const [errorMessage, setErrorMessage] = React.useState(null);
 
   useEffect(() => {
     apiCall('admin/quiz', 'GET', {}, '')
       .then((data) => {
-        console.log(data);
         setQuizList(data.quizzes);
       })
   }, []);
@@ -43,7 +42,6 @@ const Dashboard = ({ token }) => {
   };
   // start quiz
   async function startQuiz (quizID) {
-    console.log(quizID)
     const response = await fetch(`http://localhost:5005/admin/quiz/${quizID}/start`, {
       method: 'POST',
       headers: {
@@ -72,13 +70,11 @@ const Dashboard = ({ token }) => {
     if (data.error) {
       setErrorMessage(data.error);
     } else {
-      console.log(data)
-      setQuiz(data);
+      setQuiz([data, quizID]);
     }
   }
   // copy link
   const copyLink = (sessionId) => {
-    console.log(sessionId)
     const url = `http://localhost:3000/game/${sessionId}`;
     navigator.clipboard.writeText(url)
       .then(() => {
@@ -136,11 +132,12 @@ const Dashboard = ({ token }) => {
         <DialogTitle sx={{ textAlign: 'center', fontSize: '40px', color: 'white' }}>Session ID</DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ textAlign: 'center', fontSize: '30px', color: 'white' }}>
-            {quiz.active}
+            {quiz[0] ? quiz[0].active : ''}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => copyLink(quiz.active)} full='true' >Copy Link</Button>
+          <Button onClick={() => copyLink(quiz[0] ? quiz[0].active : '')} full='true' >Copy Link</Button>
+          <Button onClick={() => navigate(`/game/admin/${quiz[0].active}/${quiz[1]}`) } full='true' >Start Game</Button>
           <Button onClick={handleClose} full='true' >Close</Button>
         </DialogActions>
       </Dialog>
@@ -159,7 +156,7 @@ const Dashboard = ({ token }) => {
       >
         <DialogTitle sx={{ textAlign: 'center', fontSize: '20px', color: 'white' }}>Would you like to view the results?</DialogTitle>
         <DialogActions>
-          <Button onClick={() => navigate(`/game/result/${quiz.active}`) } full='true' >Yes</Button>
+          <Button onClick={() => navigate(`/game/admin/${quiz[0].active}/${quiz[1]}`) } full='true' >Yes</Button>
           <Button onClick={handleClose2} full='true' >No</Button>
         </DialogActions>
       </Dialog>
