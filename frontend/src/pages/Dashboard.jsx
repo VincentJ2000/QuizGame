@@ -226,7 +226,9 @@ const Dashboard = ({ token }) => {
                 component="img"
                 alt="img"
                 height="140"
-                image={quiz.thumbnail}
+                image={(quiz.thumbnail === null || quiz.thumbnail === '')
+                  ? 'https://t4.ftcdn.net/jpg/02/07/87/79/240_F_207877921_BtG6ZKAVvtLyc5GWpBNEIlIxsffTtWkv.jpg'
+                  : quiz.thumbnail}
               />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">{quiz.name}</Typography>

@@ -110,7 +110,7 @@ const EditQuestion = () => {
   };
 
   useEffect(() => {
-    if (imageAttachment !== '') {
+    if (imageAttachment !== '' && attachmentType === 'image') {
       fileToDataUrl(imageAttachment)
         .then((data) => {
           setAttachment(data);
@@ -139,7 +139,7 @@ const EditQuestion = () => {
                   <TextField
                       required
                       id="attachment"
-                      label="Video URL"
+                      label="Embedded Video URL"
                       value={attachment}
                       onChange={(e) => setAttachment(e.target.value)}
                       type="text"
@@ -153,7 +153,7 @@ const EditQuestion = () => {
 
   const updateQuestion = async () => {
     const newQuestion = quizDetails.questions;
-    newQuestion.push({
+    const finalQuestion = {
       id: questionID,
       type: questionType,
       question,
@@ -162,7 +162,12 @@ const EditQuestion = () => {
       points,
       attachmentType,
       attachment
-    });
+    };
+    if (updateState === 'Add') {
+      newQuestion.push(finalQuestion);
+    } else {
+      newQuestion[questionID - 1] = finalQuestion;
+    }
 
     await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
       method: 'PUT',

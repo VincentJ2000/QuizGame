@@ -110,10 +110,10 @@ const EditQuiz = () => {
         />)
       } else if (attachmentType === 'video') {
         return (<CardMedia
-          component="video"
+          component="iframe"
           alt="video"
-          height="140"
-          image={attachment}
+          height="250"
+          src={attachment}
         />)
       }
     }
@@ -124,6 +124,22 @@ const EditQuiz = () => {
       image='https://t4.ftcdn.net/jpg/02/07/87/79/240_F_207877921_BtG6ZKAVvtLyc5GWpBNEIlIxsffTtWkv.jpg'
     />)
   };
+
+  const calculateTime = (timeLimit) => {
+    let timeString = '0';
+    if (timeLimit !== 0) {
+      const min = Math.floor(timeLimit / 60);
+      const sec = Math.floor(timeLimit % 60);
+      if (min === 0) {
+        timeString = `${sec} seconds`;
+      } else if (sec === 0) {
+        timeString = `${min} minutes`;
+      } else {
+        timeString = `${min} minutes ${sec} seconds`;
+      }
+    }
+    return timeString;
+  }
 
   return (
     <>
@@ -179,10 +195,11 @@ const EditQuiz = () => {
             </Grid>
             <Button variant="contained" fullWidth onClick={addQuestion}>Add Question</Button>
             {questionList && questionList.map((data) => (
-              <Card key={data.id} sx={{ width: '100%' }}>
+              <Card key={data.id} sx={{ width: '100%', marginBottom: '1rem', border: '2px solid teal' }}>
                 <CardHeader
+                  sx={{ bgcolor: '#99FFCC' }}
                   title={'Question ' + data.id + ': ' + data.question}
-                  subheader={'Points: ' + data.points + ', Time Limit: ' + data.timeLimit}
+                  subheader={'Points: ' + data.points + ', Time Limit: ' + calculateTime(data.timeLimit)}
                 />
                 <CardContent>
                   <Grid
