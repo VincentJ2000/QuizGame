@@ -164,7 +164,7 @@ const EditQuestion = () => {
       attachment
     });
 
-    const response = await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
+    await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
@@ -176,7 +176,6 @@ const EditQuestion = () => {
         thumbnail: quizDetails.thumbnail,
       })
     });
-    console.log(response.json());
     navigate('/edit/' + quizID);
   }
 
