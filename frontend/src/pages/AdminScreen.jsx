@@ -255,7 +255,7 @@ const AdminScreen = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      flexDirection: 'column'
+      flexDirection: 'column',
     }}>
       {errorMessage && (
         <Alert severity="error">
@@ -276,17 +276,15 @@ const AdminScreen = () => {
                     color: 'black',
                     bgcolor: 'white',
                     fontSize: '40px',
-                    height: '80vh',
                     width: '80vw',
                     display: 'flex',
                     alignItems: 'center',
                     flexDirection: 'column',
-                    justifyContent: 'space-evenly',
-                    overflowY: 'scroll'
+                    justifyContent: 'space-evenly'
                   }}>
                     {leaderboardData
                       ? <>
-                          <Box>Leaderboard</Box>
+                          <Box sx={{ width: '80', height: '100px', marginTop: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Leaderboard</Box>
                           <TableContainer component={Paper}>
                             <Table sx={{ border: '5px solid #00695c' }}>
                               <TableHead>
@@ -310,10 +308,10 @@ const AdminScreen = () => {
                               </TableBody>
                             </Table>
                           </TableContainer>
-                          <Box sx={{ width: '70vw', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                          <Box sx={{ width: '70vw', height: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
                             <Bar data={chartData} options={options} />
                           </Box>
-                          <Box sx={{ width: '70vw', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                          <Box sx={{ width: '70vw', height: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
                             <Bar data={chartData2} options={options2} />
                           </Box>
                         </>
