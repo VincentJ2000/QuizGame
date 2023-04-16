@@ -87,7 +87,7 @@ const EditQuiz = () => {
   };
 
   const editQuestion = (questionID) => {
-
+    navigate(`/edit/${quizID}/${questionID}`);
   };
 
   const deleteQuestion = (questionID) => {
