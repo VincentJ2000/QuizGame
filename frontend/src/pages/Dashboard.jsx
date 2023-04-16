@@ -212,7 +212,7 @@ const Dashboard = ({ token }) => {
             {errorMessage}
         </Alert>
       )}
-      <Grid container spacing={5} alignItems="flex-end">
+      <Grid container sx={{ padding: '1rem' }} spacing={3} alignItems="flex-end">
         {quizList.map((quiz, index) => (
           <Grid
             item
@@ -221,11 +221,11 @@ const Dashboard = ({ token }) => {
             sm={6}
             md={4}
           >
-            <Card sx={{ maxWidth: 345 }}>
+            <Card sx={{ maxWidth: 500 }}>
               <CardMedia
                 component="img"
                 alt="img"
-                height="140"
+                height="250"
                 image={(quiz.thumbnail === null || quiz.thumbnail === '')
                   ? 'https://t4.ftcdn.net/jpg/02/07/87/79/240_F_207877921_BtG6ZKAVvtLyc5GWpBNEIlIxsffTtWkv.jpg'
                   : quiz.thumbnail}
@@ -234,7 +234,7 @@ const Dashboard = ({ token }) => {
                 <Typography gutterBottom variant="h5" component="div">{quiz.name}</Typography>
                 <Typography variant="body2" color="text.secondary">Quiz time: {totalTime[quiz.id]}</Typography>
               </CardContent>
-              <CardActions sx={{ padding: '1rem' }}>
+              <CardActions sx={{ paddingY: '1rem' }}>
                 <Button sx={{ bgcolor: '#66bb6a', color: 'white' }} onClick={() => startQuiz(quiz.id)}>Start Quiz</Button>
                 <Button sx={{ bgcolor: 'purple', color: 'white' }} onClick={() => stopQuiz(quiz.id)}>Stop Quiz</Button>
                 <Button sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={() => editQuiz(quiz.id)}>Edit Quiz</Button>
