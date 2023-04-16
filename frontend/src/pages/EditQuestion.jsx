@@ -23,6 +23,7 @@ const EditQuestion = () => {
   const questionID = params.questionID;
 
   const [quizDetails, setQuizDetails] = useState({});
+  const [updateState, setUpdateState] = useState('Add');
   const [questionType, setQuestionType] = useState('SC');
   const [question, setQuestion] = useState('');
   const [answerCount, setAnswerCount] = useState(2);
@@ -45,8 +46,21 @@ const EditQuestion = () => {
       }
     });
     const data = await response.json();
-    console.log(data);
     setQuizDetails(data);
+    // Found existing question details
+    if (data.questions.length >= questionID) {
+      const currQuestion = data.questions[questionID - 1];
+      setQuestionType(currQuestion.type);
+      setQuestion(currQuestion.question);
+      setAnswerCount(currQuestion.answerList.length);
+      setAnswerList(currQuestion.answerList);
+      setTimeLimit(currQuestion.timeLimit);
+      setPoints(currQuestion.points);
+      setAttachmentType(currQuestion.attachmentType);
+      setAttachment(currQuestion.attachment);
+      setImageAttachment(currQuestion.attachment);
+      setUpdateState('Edit');
+    }
   }
 
   useEffect(async () => {
@@ -137,7 +151,7 @@ const EditQuestion = () => {
     }
   };
 
-  const addQuestion = async () => {
+  const updateQuestion = async () => {
     const newQuestion = quizDetails.questions;
     newQuestion.push({
       id: questionID,
@@ -305,7 +319,7 @@ const EditQuestion = () => {
           alignItems="center"
         >
           <Grid item><Button variant='contained' color='success' onClick={goToQuiz}>Go back to Quiz</Button></Grid>
-          <Grid item><Button variant='contained' onClick={addQuestion}>Add Question</Button></Grid>
+          <Grid item><Button variant='contained' onClick={updateQuestion}>{updateState} Question</Button></Grid>
         </Grid>
       </Container>
     </>

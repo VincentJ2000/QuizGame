@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from './Button';
 import PsychologyOutlinedIcon from '@mui/icons-material/PsychologyOutlined';
@@ -18,25 +18,6 @@ const Navbar = ({ setQuizList }) => {
   const navigate = useNavigate();
   const [gameModal, setGameModal] = useState(false);
   const [newGame, setNewGame] = useState('');
-
-  const fetchAllQuizzes = async () => {
-    const response = await fetch('http://localhost:5005/admin/quiz/', {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      }
-    });
-    const data = await response.json();
-    console.log(data);
-    if (setQuizList) {
-      setQuizList(data.quizzes);
-    }
-  }
-
-  useEffect(async () => {
-    await fetchAllQuizzes();
-  }, [gameModal]);
 
   async function logout () {
     await fetch('http://localhost:5005/admin/auth/logout', {
@@ -69,8 +50,12 @@ const Navbar = ({ setQuizList }) => {
         name: newGame
       }),
     });
-    await fetchAllQuizzes();
+    setNewGame('');
     handleCloseModal();
+    // Change quizList state to invoke useEffect to fetchAllQuizzes
+    if (setQuizList) {
+      setQuizList([]);
+    }
   };
 
   const toDashboard = () => {

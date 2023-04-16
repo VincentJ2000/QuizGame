@@ -43,8 +43,11 @@ const Dashboard = ({ token }) => {
       const sec = Math.floor(countTime % 60);
       if (min === 0) {
         timeString = `${sec} seconds`;
+      } else if (sec === 0) {
+        timeString = `${min} minutes`;
+      } else {
+        timeString = `${min} minutes ${sec} seconds`;
       }
-      timeString = `${min} minutes ${sec} seconds`;
     }
     setTotalTime(totalTime => ({ ...totalTime, [quizID]: timeString }));
   }
