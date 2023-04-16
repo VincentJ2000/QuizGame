@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import Navbar from '../components/Navbar';
-import apiCall from './API';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Dialog from '@mui/material/Dialog';
@@ -25,11 +24,21 @@ const Dashboard = ({ token }) => {
   const [quiz, setQuiz] = useState([]);
   const [errorMessage, setErrorMessage] = React.useState(null);
 
-  useEffect(() => {
-    apiCall('admin/quiz', 'GET', {}, '')
-      .then((data) => {
-        setQuizList(data.quizzes);
-      })
+  const fetchAllQuizzes = async () => {
+    const response = await fetch('http://localhost:5005/admin/quiz/', {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      }
+    });
+    const data = await response.json();
+    console.log(data);
+    setQuizList(data.quizzes);
+  }
+
+  useEffect(async () => {
+    await fetchAllQuizzes();
   }, []);
 
   // startQuiz popup
@@ -107,15 +116,23 @@ const Dashboard = ({ token }) => {
     }
   }
   const editQuiz = (quizID) => {
-    navigate('/edit', { id: quizID });
+    navigate('/edit/' + quizID);
   };
 
-  const deleteQuiz = (quizID) => {
+  const deleteQuiz = async (quizID) => {
+    await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    await fetchAllQuizzes();
   };
 
   return (
     <>
-      <Navbar></Navbar>
+      <Navbar setQuizList={setQuizList}></Navbar>
       <Dialog
         fullWidth
         maxWidth='xs'
@@ -167,10 +184,10 @@ const Dashboard = ({ token }) => {
         </Alert>
       )}
       <Grid container spacing={5} alignItems="flex-end">
-        {quizList.map((quiz) => (
+        {quizList.map((quiz, index) => (
           <Grid
             item
-            key={quiz.id}
+            key={index}
             xs={12}
             sm={6}
             md={4}
@@ -196,25 +213,6 @@ const Dashboard = ({ token }) => {
           </Grid>
         ))}
       </Grid>
-      {/* <Box>
-        <Card sx={{ maxWidth: 345 }}>
-          <CardMedia
-            component="img"
-            alt="dog"
-            height="140"
-            image={dogPic}
-          />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">Title</Typography>
-            <Typography variant="body2" color="text.secondary">Time</Typography>
-          </CardContent>
-          <CardActions sx={{ padding: '1rem' }}>
-            <Button sx={{ bgcolor: '#66bb6a', color: 'white' }} onClick={startQuiz(quizID)}>Start Quiz</Button>
-            <Button sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={editQuiz(quizID)}>Edit Quiz</Button>
-            <Button sx={{ bgcolor: '#ef5350', color: 'white' }} onClick={deleteQuiz(quizID)}>Delete Quiz</Button>
-          </CardActions>
-        </Card>
-      </Box> */}
     </>
   )
 }

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from './Button';
-import apiCall from '../pages/API';
 import PsychologyOutlinedIcon from '@mui/icons-material/PsychologyOutlined';
 import {
   Box,
@@ -15,16 +14,38 @@ import {
   AppBar
 } from '@mui/material'
 
-const Navbar = () => {
+const Navbar = ({ setQuizList }) => {
+  const navigate = useNavigate();
   const [gameModal, setGameModal] = useState(false);
   const [newGame, setNewGame] = useState('');
 
-  const navigate = useNavigate();
+  const fetchAllQuizzes = async () => {
+    const response = await fetch('http://localhost:5005/admin/quiz/', {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      }
+    });
+    const data = await response.json();
+    console.log(data);
+    if (setQuizList) {
+      setQuizList(data.quizzes);
+    }
+  }
+
+  useEffect(async () => {
+    await fetchAllQuizzes();
+  }, [gameModal]);
+
   async function logout () {
-    apiCall('admin/auth/logout', 'POST')
-      .then((data) => {
-        console.log(data);
-      });
+    await fetch('http://localhost:5005/admin/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      }
+    });
     localStorage.removeItem('token');
     navigate('/');
   }
@@ -38,20 +59,29 @@ const Navbar = () => {
   };
 
   const addQuiz = async () => {
-    apiCall('admin/quiz/new', 'POST', { name: newGame })
-      .then((data) => {
-        console.log(data);
-      });
-
+    await fetch('http://localhost:5005/admin/quiz/new', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({
+        name: newGame
+      }),
+    });
+    await fetchAllQuizzes();
     handleCloseModal();
-    window.location.reload();
   };
+
+  const toDashboard = () => {
+    navigate('/dashboard');
+  }
 
   return (
     <>
         <AppBar position="static" elevation={0} sx={{ bgcolor: '#00695c', marginBottom: '1rem' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box sx={{ display: 'flex' }}>
+                <Box sx={{ display: 'flex' }} onClick={toDashboard}>
                     <Typography variant="h1" sx={{ fontSize: '3rem', color: 'white', marginLeft: '1rem', marginTop: '1rem' }}> BigBrain</Typography>
                     <PsychologyOutlinedIcon sx={{ fontSize: 80, color: 'white', marginBottom: '1rem' }} />
                   </Box>

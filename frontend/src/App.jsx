@@ -43,12 +43,12 @@ function App () {
           <Route path="/dashboard" element={<Dashboard token={token} />} />
           <Route path="/register" element={<Register onSuccess={manageTokenSet} />} />
           <Route path="/login" element={<Login onSuccess={manageTokenSet} />} />
-          <Route path="/edit" element={<EditQuiz />} />
-          <Route path="/editQuestion" element={<EditQuestion />} />
           <Route path="/game" element={<Game />} />
           <Route path="/game/:sessionid" element={<GameScreen />} />
           <Route path="/game/:sessionid/:playerid/play" element={<GamePlay/>} />
           <Route path="/game/admin/:sessionid/:quizid" element={<AdminScreen />} />
+          <Route path="/edit/:quizID" element={<EditQuiz />} />
+          <Route path="/edit/:quizID/:questionID" element={<EditQuestion />} />
           {/* <Route path="/profile/:name" element={<Profile />} /> */}
         </Routes>
       </BrowserRouter>
