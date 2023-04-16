@@ -5,7 +5,10 @@
 */
 export const quizQuestionPublicReturn = question => {
   console.log('See question: ', question);
-  return question;
+  const playerQuestion = question;
+  delete playerQuestion['answerList'];
+  console.log('See question: ', playerQuestion);
+  return playerQuestion;
 };
 
 /*
@@ -13,9 +16,9 @@ export const quizQuestionPublicReturn = question => {
  the correct answers (minimum 1).
 */
 export const quizQuestionGetCorrectAnswers = question => {
-  return [
-    123,
-  ]; // For a single answer
+  // Returns an array of correct answer IDs
+  const correctAnswers = question.answerList.filter((data) => data.correct === true).map((ans) => ans.id);
+  return correctAnswers; // For a single answer
 };
 
 /*
@@ -23,11 +26,9 @@ export const quizQuestionGetCorrectAnswers = question => {
  all of the answers, correct or incorrect.
 */
 export const quizQuestionGetAnswers = question => {
-  return [
-    123,
-    456,
-    678,
-  ]; // For a single answer
+  // Returns an array of answer IDs
+  const answerArray = question.answerList.map((ans) => ans.id);
+  return answerArray; // For a single answer
 };
 
 /*
@@ -35,5 +36,5 @@ export const quizQuestionGetAnswers = question => {
  of the question once it starts. (Seconds)
 */
 export const quizQuestionGetDuration = question => {
-  return 10;
+  return question.timeLimit;
 };
