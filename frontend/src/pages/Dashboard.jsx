@@ -20,6 +20,7 @@ import {
 
 const Dashboard = ({ token }) => {
   const navigate = useNavigate();
+  const [fetchState, setFetchState] = useState(false);
   const [quizList, setQuizList] = useState([]);
   const [quiz, setQuiz] = useState([]);
   const [errorMessage, setErrorMessage] = React.useState(null);
@@ -35,7 +36,6 @@ const Dashboard = ({ token }) => {
       },
     });
     const data = await response.json();
-
     const countTime = data.questions.reduce((count, question) => count + question.timeLimit, 0);
     let timeString = '0';
     if (countTime !== 0) {
@@ -67,7 +67,7 @@ const Dashboard = ({ token }) => {
 
   useEffect(async () => {
     await fetchAllQuizzes();
-  }, [quizList]);
+  }, [fetchState]);
 
   // startQuiz popup
   const [open, setOpen] = React.useState(false);
@@ -155,13 +155,13 @@ const Dashboard = ({ token }) => {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-    // Change quizList state to invoke useEffect to fetchAllQuizzes
-    setQuizList([]);
+    // fetchAllQuizzes
+    setFetchState(!fetchState);
   };
 
   return (
     <>
-      <Navbar setQuizList={setQuizList}></Navbar>
+      <Navbar fetchState={fetchState} setFetchState={setFetchState}></Navbar>
       <Dialog
         fullWidth
         maxWidth='xs'
