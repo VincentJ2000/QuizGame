@@ -70,7 +70,7 @@ const GamePlay = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                Please Wait
+                Please Wait, You are in lobby
               </Box>
               <CircularProgress sx={{ color: 'white' }} />
             </>
