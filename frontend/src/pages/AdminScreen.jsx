@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { checkToken } from './Refresh';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
@@ -11,7 +11,7 @@ import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 const AdminScreen = () => {
-//   const navigate = useNavigate();
+  const navigate = useNavigate();
   const sessionId = useParams().sessionid;
   const quizId = useParams().quizid;
   const [errorMessage, setErrorMessage] = React.useState(null);
@@ -59,6 +59,7 @@ const AdminScreen = () => {
       },
     });
     const data = await response.json();
+    console.log(data)
     if (data.error) {
       setErrorMessage(data.error);
     }
@@ -177,27 +178,29 @@ const AdminScreen = () => {
         return { question, count: correctQuestionCount[question] };
       });
       // for chart
-      const labels = questionCountArray.map(q => 'question ' + q.question);
-      const data = questionCountArray.map(q => q.count);
-      setChartData({
-        labels: labels,
-        datasets: [
-          {
-            label: '% of people who got the question correct',
-            data: data.map((count) => ((count / totalPlayer) * 100).toFixed(2)),
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1,
-          },
-        ],
-      });
-      setOptions({
-        scales: {
-          y: {
-            beginAtZero: true
+      if (questionCountArray) {
+        const labels = questionCountArray.map(q => 'question ' + q.question);
+        const data = questionCountArray.map(q => q.count);
+        setChartData({
+          labels: labels,
+          datasets: [
+            {
+              label: '% of people who got the question correct',
+              data: data.map((count) => ((count / totalPlayer) * 100).toFixed(2)),
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1,
+            },
+          ],
+        });
+        setOptions({
+          scales: {
+            y: {
+              beginAtZero: true
+            }
           }
-        }
-      });
+        });
+      }
 
       // Average response/answer time
       const questionAverages = {};
@@ -222,28 +225,29 @@ const AdminScreen = () => {
         };
       });
       // for chart
-      console.log(questionAverages)
-      const labels2 = Object.values(questionAverages).map(q => 'question ' + q.question);
-      const data2 = Object.values(questionAverages).map(q => q.averageTimeTaken);
-      setChartData2({
-        labels: labels2,
-        datasets: [
-          {
-            label: 'Average time taken to answer each question in seconds',
-            data: data2,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1,
-          },
-        ],
-      });
-      setOptions2({
-        scales: {
-          y: {
-            beginAtZero: true
+      if (questionAverages) {
+        const labels2 = Object.values(questionAverages).map(q => 'question ' + q.question);
+        const data2 = Object.values(questionAverages).map(q => q.averageTimeTaken);
+        setChartData2({
+          labels: labels2,
+          datasets: [
+            {
+              label: 'Average time taken to answer each question in seconds',
+              data: data2,
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1,
+            },
+          ],
+        });
+        setOptions2({
+          scales: {
+            y: {
+              beginAtZero: true
+            }
           }
-        }
-      });
+        });
+      }
     }
   }, [leaderboardData]);
 
@@ -284,7 +288,10 @@ const AdminScreen = () => {
                   }}>
                     {leaderboardData
                       ? <>
-                          <Box sx={{ width: '80', height: '100px', marginTop: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Leaderboard</Box>
+                          <Box sx={{ width: '80vw', height: '100px', marginTop: '400px', display: 'flex', justifyContent: 'space-around' }}>
+                            Leaderboard
+                            <Button onClick={() => { navigate('/dashboard') }}>Back to Dashboard</Button>
+                          </Box>
                           <TableContainer component={Paper}>
                             <Table sx={{ border: '5px solid #00695c' }}>
                               <TableHead>
@@ -292,17 +299,17 @@ const AdminScreen = () => {
                                   <TableCell colSpan={2} align="center" sx={{ fontSize: '22px' }}>Top 5 Players</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                  <TableCell>Player Name</TableCell>
-                                  <TableCell align="right">Score</TableCell>
+                                  <TableCell align="center">Player Name</TableCell>
+                                  <TableCell align="center">Score</TableCell>
                                 </TableRow>
                               </TableHead>
                               <TableBody>
                                 {topPlayers.map((player, index) => (
                                   <TableRow key={index}>
-                                    <TableCell component="th" scope="row">
+                                    <TableCell component="th" scope="row" align="center">
                                       {player.name}
                                     </TableCell>
-                                    <TableCell align="right">{player.score}</TableCell>
+                                    <TableCell align="center">{player.score}</TableCell>
                                   </TableRow>
                                 ))}
                               </TableBody>
