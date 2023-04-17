@@ -23,6 +23,7 @@ const AdminScreen = () => {
   const [chartData2, setChartData2] = React.useState({});
   const [options, setOptions] = React.useState({});
   const [options2, setOptions2] = React.useState({});
+  const [gameStatus, setGameStatus] = React.useState(0);
   checkToken(`/game/admin/${sessionId}/${quizId}`, true);
 
   // get game status
@@ -36,9 +37,11 @@ const AdminScreen = () => {
         },
       });
       const data = await response.json();
+      console.log(data)
       if (data.error) {
         setErrorMessage(data.error);
       } else {
+        setGameStatus(data.results.questions.length);
         if (data.results.active === true) {
           setFinished(false)
         } else {
@@ -59,8 +62,13 @@ const AdminScreen = () => {
       },
     });
     const data = await response.json();
+    console.log(data)
     if (data.error) {
       setErrorMessage(data.error);
+    } else {
+      if (data.stage === gameStatus) {
+        setFinished(true);
+      }
     }
   }
 
