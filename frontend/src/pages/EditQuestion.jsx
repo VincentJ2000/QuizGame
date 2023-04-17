@@ -111,14 +111,18 @@ const EditQuestion = () => {
 
   useEffect(() => {
     if (imageAttachment !== '' && attachmentType === 'image') {
-      fileToDataUrl(imageAttachment)
-        .then((data) => {
-          setAttachment(data);
-        })
-        .catch(() => {
-          alert('Base64 error.');
-          setImageAttachment('');
-        })
+      const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      const validFile = validFileTypes.find((type) => type === imageAttachment.type);
+      if (validFile) {
+        fileToDataUrl(imageAttachment)
+          .then((data) => {
+            setAttachment(data);
+          })
+          .catch(() => {
+            alert('Base64 error.');
+            setImageAttachment('');
+          })
+      }
     }
   }, [imageAttachment]);
 
@@ -288,9 +292,9 @@ const EditQuestion = () => {
           alignItems="center"
         >
           {answerList.map((data, index) => (
-            <Grid item xs={6} key={index}>
+            <Grid item xs={12} sm={6} key={index}>
               <Grid container spacing={1} direction="row" alignItems="center" sx={{ paddingBottom: '1rem', border: '2px solid teal' }}>
-                <Grid item xs={9} sm={10}>
+                <Grid item xs={10}>
                     <TextField
                       required
                       id={toString(data.id)}

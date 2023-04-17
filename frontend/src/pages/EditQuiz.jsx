@@ -155,7 +155,7 @@ const EditQuiz = () => {
         >
             <Typography variant="h4" component="div" align="center">Questions of {quizDetails.name}</Typography>
             <Grid container spacing={5} justifyContent="center">
-                <Grid item xs={5}>
+                <Grid item xs={12} sm={5}>
                     <img
                         src={(previewThumbnail === null || previewThumbnail === '')
                           ? 'https://t4.ftcdn.net/jpg/02/07/87/79/240_F_207877921_BtG6ZKAVvtLyc5GWpBNEIlIxsffTtWkv.jpg'
@@ -165,7 +165,7 @@ const EditQuiz = () => {
                         style={{ width: '100%', maxHeight: '250px' }}
                     />
                 </Grid>
-                <Grid item xs={5}>
+                <Grid item xs={12} sm={5}>
                     <Grid container spacing={3}>
                         <Grid item>
                             <TextField
@@ -208,7 +208,6 @@ const EditQuiz = () => {
                   >
                     <Grid item xs={6}>{attachmentComponent(data.attachmentType, data.attachment)}</Grid>
                     <Grid item xs={6}>
-                      <Grid container >
                         <Typography gutterBottom variant="h6" component="div">Answer List</Typography>
                         <Grid
                           container
@@ -218,7 +217,7 @@ const EditQuiz = () => {
                           alignItems="center"
                         >
                         {data.answerList.map((ans, index) => (
-                          <Grid item xs={6} key={index}>
+                          <Grid item xs={12} sm={6} key={index}>
                             <Grid container spacing={1} direction="row" alignItems="center" sx={{ paddingBottom: '1rem', border: '2px solid teal' }}>
                               <Grid item xs={8}>
                                   <Typography key={ans.id}>{ans.answer}</Typography>
@@ -232,13 +231,12 @@ const EditQuiz = () => {
                           </Grid>
                         ))}
                         </Grid>
-                      </Grid>
                     </Grid>
                   </Grid>
                 </CardContent>
                 <CardActions sx={{ padding: '1rem', justifyContent: 'center' }}>
-                  <Button key={data.id} fullWidth sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={() => editQuestion(data.id)}>Edit Question</Button>
-                  <Button key={data.id} fullWidth sx={{ bgcolor: '#ef5350', color: 'white' }} onClick={() => deleteQuestion(data.id)}>Delete Question</Button>
+                  <Button fullWidth sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={() => editQuestion(data.id)}>Edit Question</Button>
+                  <Button fullWidth sx={{ bgcolor: '#ef5350', color: 'white' }} onClick={() => deleteQuestion(data.id)}>Delete Question</Button>
                 </CardActions>
               </Card>
             ))}
