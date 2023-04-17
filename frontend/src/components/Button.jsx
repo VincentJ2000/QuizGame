@@ -13,12 +13,13 @@ function Button (props) {
       marginBottom: props.full ? 0 : '10px',
       bgcolor: props.bgcolor ? props.bgcolor : teal.A200,
       color: props.color ? props.color : 'common.black',
+      border: props.border ? `${props.border} 2px solid` : 0,
     }}
     variant="extended"
     {...props}
     onClick={(e) => { props.onClick(e); }}
   >
-    <Typography sx={{ fontSize: '1.1rem' }}>{props.children}</Typography>
+    <Typography sx={{ fontSize: props.size ? props.size : '1.1rem' }}>{props.children}</Typography>
   </Fab>
 }
 

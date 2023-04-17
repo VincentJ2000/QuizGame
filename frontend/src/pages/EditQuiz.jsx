@@ -6,7 +6,7 @@ import {
   Typography,
   Grid,
   TextField,
-  Button,
+  // Button,
   Card,
   CardMedia,
   CardContent,
@@ -16,6 +16,7 @@ import {
   Checkbox
 } from '@mui/material'
 import fileToDataUrl from './helpers.js';
+import Button from '../components/Button';
 
 const EditQuiz = () => {
   const navigate = useNavigate();
@@ -188,12 +189,12 @@ const EditQuiz = () => {
                             />
                         </Grid>
                         <Grid item>
-                            <Button variant="outlined" onClick={updateQuiz}>Update Name & Thumbnail</Button>
+                            <Button full='true' border='#1876d1' bgcolor='white' color='#1876d1' size='0.9rem' onClick={updateQuiz}>Update Name & Thumbnail</Button>
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-            <Button variant="contained" fullWidth onClick={addQuestion}>Add Question</Button>
+            <Button full='true' bgcolor='#ef5350' color='white' onClick={addQuestion}>Add Question</Button>
             {questionList && questionList.map((data) => (
               <Card key={data.id} sx={{ width: '100%', marginBottom: '1rem', border: '2px solid teal' }}>
                 <CardHeader
@@ -235,8 +236,8 @@ const EditQuiz = () => {
                   </Grid>
                 </CardContent>
                 <CardActions sx={{ padding: '1rem', justifyContent: 'center' }}>
-                  <Button fullWidth sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={() => editQuestion(data.id)}>Edit Question</Button>
-                  <Button fullWidth sx={{ bgcolor: '#ef5350', color: 'white' }} onClick={() => deleteQuestion(data.id)}>Delete Question</Button>
+                  <Button full='true' bgcolor='#fb8c00' color='white' onClick={() => editQuestion(data.id)}>Edit Question</Button>
+                  <Button full='true' bgcolor='#ef5350' color='white' onClick={() => deleteQuestion(data.id)}>Delete Question</Button>
                 </CardActions>
               </Card>
             ))}
