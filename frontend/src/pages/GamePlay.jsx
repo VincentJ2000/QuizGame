@@ -17,7 +17,7 @@ const GamePlay = () => {
   const prevQuestionRef = React.useRef(null);
   const [selected, setSelected] = React.useState(null);
   const [answer, setAnswer] = React.useState(null);
-
+  const [correctAnswer, setCorrectAnswer] = React.useState(null);
   checkToken(`/game/${sessionId}/${playerId}/play`, true);
 
   // check game started
@@ -80,6 +80,7 @@ const GamePlay = () => {
     if (question !== null) {
       setTimeRemaining(question.question.timeLimit)
       setSelected([])
+      setCorrectAnswer(null)
     }
   }, [question]);
 
@@ -111,19 +112,6 @@ const GamePlay = () => {
           return [...prevSelectedAnswers, id];
         }
       });
-    }
-    if (answer && answer.answerIds && answer.answerIds.includes(id)) {
-      return {
-        sx: {
-          backgroundColor: 'green'
-        }
-      }
-    } else {
-      return {
-        sx: {
-          backgroundColor: 'red'
-        }
-      }
     }
   };
 
@@ -170,6 +158,17 @@ const GamePlay = () => {
       setAnswer(data)
     }
   }
+  // check answer
+  React.useEffect(() => {
+    if (answer) {
+      const getAnswerName = (answerId) => {
+        const answer = question.question.questionList.find((answer) => answer.id === answerId);
+        return answer ? answer.answer : null;
+      }
+      const correctAnswers = answer.answerIds.map((answerId) => getAnswerName(answerId));
+      setCorrectAnswer(correctAnswers)
+    }
+  }, [answer])
 
   return (
     <Box sx={{
@@ -203,7 +202,7 @@ const GamePlay = () => {
             }}>
               {question &&
                 <>
-                  {answer && <Typography>Answer: {answer.answerIds.join(', ')}</Typography>}
+                  {correctAnswer && <Typography>Answer: {correctAnswer.join(', ')}</Typography>}
                   <Typography>Time remaining: {timeRemaining} seconds</Typography>
                   <Typography>{question.question.question}</Typography>
                   {question.question.attachment &&

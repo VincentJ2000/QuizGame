@@ -59,7 +59,6 @@ const AdminScreen = () => {
       },
     });
     const data = await response.json();
-    console.log(data)
     if (data.error) {
       setErrorMessage(data.error);
     }
@@ -153,7 +152,7 @@ const AdminScreen = () => {
         return playerList;
       })
     if (scores) {
-      scores[0].sort((a, b) => b.score - a.score);
+      scores[0] && scores[0].sort((a, b) => b.score - a.score);
     }
     setLeaderboardData(scores);
   }
@@ -179,27 +178,31 @@ const AdminScreen = () => {
       });
       // for chart
       if (questionCountArray) {
-        const labels = questionCountArray.map(q => 'question ' + q.question);
-        const data = questionCountArray.map(q => q.count);
-        setChartData({
-          labels: labels,
-          datasets: [
-            {
-              label: '% of people who got the question correct',
-              data: data.map((count) => ((count / totalPlayer) * 100).toFixed(2)),
-              backgroundColor: 'rgba(54, 162, 235, 0.2)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1,
-            },
-          ],
-        });
-        setOptions({
-          scales: {
-            y: {
-              beginAtZero: true
-            }
+        if (questionCountArray.length > 0) {
+          const labels = questionCountArray.map(q => 'question ' + q.question);
+          const data = questionCountArray.map(q => q.count);
+          if (data && labels && data.length > 0 && labels.length > 0) {
+            setChartData({
+              labels: labels,
+              datasets: [
+                {
+                  label: '% of people who got the question correct',
+                  data: data.map((count) => ((count / totalPlayer) * 100).toFixed(2)),
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  borderWidth: 1,
+                },
+              ],
+            });
+            setOptions({
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            });
           }
-        });
+        }
       }
 
       // Average response/answer time
@@ -226,27 +229,31 @@ const AdminScreen = () => {
       });
       // for chart
       if (questionAverages) {
-        const labels2 = Object.values(questionAverages).map(q => 'question ' + q.question);
-        const data2 = Object.values(questionAverages).map(q => q.averageTimeTaken);
-        setChartData2({
-          labels: labels2,
-          datasets: [
-            {
-              label: 'Average time taken to answer each question in seconds',
-              data: data2,
-              backgroundColor: 'rgba(54, 162, 235, 0.2)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1,
-            },
-          ],
-        });
-        setOptions2({
-          scales: {
-            y: {
-              beginAtZero: true
-            }
+        if (Object.keys(questionAverages).length) {
+          const labels2 = Object.values(questionAverages).map(q => 'question ' + q.question);
+          const data2 = Object.values(questionAverages).map(q => q.averageTimeTaken);
+          if (data2 && labels2 && data2.length > 0 && labels2.length > 0) {
+            setChartData2({
+              labels: labels2,
+              datasets: [
+                {
+                  label: 'Average time taken to answer each question in seconds',
+                  data: data2,
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  borderWidth: 1,
+                },
+              ],
+            });
+            setOptions2({
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            });
           }
-        });
+        }
       }
     }
   }, [leaderboardData]);
@@ -304,7 +311,7 @@ const AdminScreen = () => {
                                 </TableRow>
                               </TableHead>
                               <TableBody>
-                                {topPlayers.map((player, index) => (
+                                {topPlayers && topPlayers.map((player, index) => (
                                   <TableRow key={index}>
                                     <TableCell component="th" scope="row" align="center">
                                       {player.name}
@@ -315,12 +322,14 @@ const AdminScreen = () => {
                               </TableBody>
                             </Table>
                           </TableContainer>
+                          { chartData && options && Object.keys(chartData).length > 0 &&
                           <Box sx={{ width: '70vw', height: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
                             <Bar data={chartData} options={options} />
-                          </Box>
+                          </Box>}
+                          { chartData2 && options2 && Object.keys(chartData2).length > 0 &&
                           <Box sx={{ width: '70vw', height: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
                             <Bar data={chartData2} options={options2} />
-                          </Box>
+                          </Box>}
                         </>
                       : 'Loading Results'
                     }

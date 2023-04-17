@@ -19,6 +19,7 @@ export const quizQuestionGetCorrectAnswers = question => {
   // Returns an array of correct answer IDs
   const playerQuestion = { ...question };
   const correctAnswers = playerQuestion.answerList.filter((data) => data.correct).map((ans) => ans.id);
+  console.log(correctAnswers)
   return correctAnswers; // For a single answer
 };
 
