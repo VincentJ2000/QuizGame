@@ -67,6 +67,7 @@ const GamePlay = () => {
       console.log(data.error);
       checkGameStarted()
     } else {
+      console.log(data)
       if (!prevQuestionRef.current || data.question.id !== prevQuestionRef.current.id) {
         setQuestion(data);
         prevQuestionRef.current = data.question;
@@ -301,11 +302,17 @@ const GamePlay = () => {
                   {correctAnswer && <Typography>Answer: {correctAnswer.join(', ')}</Typography>}
                   <Typography>Time remaining: {timeRemaining} seconds</Typography>
                   <Typography>{question.question.question}</Typography>
-                  {question.question.attachment &&
+                  {question.question.attachment && (
                     <Box sx={{ width: '30vw', height: '20vh' }}>
-                      <img src={question.question.attachment} alt="Question image" style={{ width: '100%', height: '100%' }} />
+                      {question.question.attachmentType === 'video'
+                        ? (
+                        <video src={question.question.attachment} alt="Question attachment (video/img)" controls style={{ width: '100%', height: '100%' }} />
+                          )
+                        : (
+                          <img src={question.question.attachment} alt="Question attachment (video/img)" style={{ width: '100%', height: '100%' }} />
+                          )}
                     </Box>
-                  }
+                  )}
                   <Box width='70vw'>
                     <Grid container spacing={4}>
                       {question.question.questionList.map((answer, index) => (
