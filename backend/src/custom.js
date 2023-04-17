@@ -6,7 +6,8 @@
 export const quizQuestionPublicReturn = question => {
   const playerQuestion = { ...question };
   const answerArray = playerQuestion.answerList.map(({ id, answer }) => ({ id, answer }));
-  playerQuestion['answerList'] = answerArray
+  playerQuestion['questionList'] = answerArray
+  delete playerQuestion['answerList']
   return playerQuestion;
 };
 
@@ -18,6 +19,7 @@ export const quizQuestionGetCorrectAnswers = question => {
   // Returns an array of correct answer IDs
   const playerQuestion = { ...question };
   const correctAnswers = playerQuestion.answerList.filter((data) => data.correct).map((ans) => ans.id);
+  console.log(correctAnswers)
   return correctAnswers; // For a single answer
 };
 
@@ -28,7 +30,7 @@ export const quizQuestionGetCorrectAnswers = question => {
 export const quizQuestionGetAnswers = question => {
   // Returns an array of answer IDs
   const playerQuestion = { ...question };
-  const answerArray = playerQuestion.answerList.map(({ id, answer }) => ({ id, answer }));
+  const answerArray = playerQuestion.answerList.map(({ id }) => ({ id }));
   return answerArray; // For a single answer
 };
 
