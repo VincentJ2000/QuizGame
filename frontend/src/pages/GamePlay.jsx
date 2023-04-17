@@ -17,6 +17,7 @@ const GamePlay = () => {
   const prevQuestionRef = React.useRef(null);
   const [selected, setSelected] = React.useState(null);
   const [answer, setAnswer] = React.useState(null);
+  const [result, setResult] = React.useState(null);
   const [correctAnswer, setCorrectAnswer] = React.useState(null);
   checkToken(`/game/${sessionId}/${playerId}/play`, true);
 
@@ -30,7 +31,11 @@ const GamePlay = () => {
       },
     });
     const data = await response.json();
-    if (data.error) {
+    console.log(data)
+    if (data.error === 'Session ID is not an active session') {
+      console.log('here in')
+      setStarted(false);
+    } else if (data.error) {
       setErrorMessage(data.error);
     } else {
       if (data.started === true) {
@@ -60,6 +65,7 @@ const GamePlay = () => {
     const data = await response.json();
     if (data.error) {
       console.log(data.error);
+      checkGameStarted()
     } else {
       if (!prevQuestionRef.current || data.question.id !== prevQuestionRef.current.id) {
         setQuestion(data);
@@ -117,7 +123,6 @@ const GamePlay = () => {
 
   // send answers
   async function sendAnswers () {
-    console.log('run')
     const response = await fetch(`http://localhost:5005/play/${playerId}/answer`, {
       method: 'PUT',
       headers: {
@@ -131,9 +136,6 @@ const GamePlay = () => {
     const data = await response.json();
     if (data.error) {
       setErrorMessage(data.error);
-      console.log(data)
-    } else {
-      console.log(data)
     }
   }
   React.useEffect(() => {
@@ -170,6 +172,100 @@ const GamePlay = () => {
     }
   }, [answer])
 
+  // get result when game ended
+  async function getResult () {
+    const response = await fetch(`http://localhost:5005/play/${playerId}/results`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        authorization: `Bearer ${localStorage.getItem('token')}`
+      },
+    });
+    const data = await response.json();
+    if (data.error) {
+      console.log(data.error)
+    } else {
+      setResult(data);
+    }
+  }
+  React.useEffect(() => {
+    if (!started) {
+      console.log(started)
+      console.log('hi')
+      getResult();
+      if (result) {
+        console.log(result)
+      }
+    }
+  }, [started]);
+
+  // render result
+  const renderResults = () => {
+    const correctAnswers = result.filter(item => item.correct);
+    const incorrectAnswers = result.filter(item => !item.correct);
+
+    if (correctAnswers.length === 0 && incorrectAnswers.length === 0) {
+      return (
+        <Box sx={{
+          borderRadius: '10px',
+          color: 'black',
+          bgcolor: 'white',
+          fontSize: '40px',
+          width: '80vw',
+          height: '80vh',
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'column',
+          justifyContent: 'space-evenly'
+        }}>
+          <Typography variant="h6">No answers submitted</Typography>
+        </Box>
+      );
+    }
+    return (
+      <>
+        <Box sx={{
+          borderRadius: '10px',
+          color: 'black',
+          bgcolor: 'white',
+          fontSize: '40px',
+          width: '80vw',
+          minHeight: '80vh',
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'column',
+          justifyContent: 'space-evenly',
+          overflowY: 'scroll'
+        }}>
+          {correctAnswers.length > 0 && (
+            <>
+              <Typography variant="h6" >Correct answers:</Typography>
+              {correctAnswers.map((item, index) => (
+                <Box key={index}>
+                  <Typography sx={{ fontSize: '20px' }}>{`Question started at: ${item.questionStartedAt}`}</Typography>
+                  <Typography>{`Answered at: ${item.answeredAt}`}</Typography>
+                  <Typography>{`Selected answer: ${item.answerIds}`}</Typography>
+                </Box>
+              ))}
+            </>
+          )}
+
+          {incorrectAnswers.length > 0 && (
+            <>
+              <Typography variant="h6">Incorrect answers:</Typography>
+              {incorrectAnswers.map((item, index) => (
+                <Box key={index}>
+                  <Typography sx={{ fontSize: '20px' }}>{`Question started at: ${item.questionStartedAt}`}</Typography>
+                  <Typography>{`Answered at: ${item.answeredAt}`}</Typography>
+                  <Typography>{`Selected answer: ${item.answerIds}`}</Typography>
+                </Box>
+              ))}`
+            </>
+          )}
+        </Box>
+      </>
+    );
+  };
   return (
     <Box sx={{
       backgroundColor: '#00695c',
@@ -230,22 +326,28 @@ const GamePlay = () => {
               }
             </Box>
           )
-        : (
-            <>
-              <Box sx={{
-                color: 'white',
-                fontSize: '40px',
-                height: '200px',
-                width: '200px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                Please Wait, You are in lobby.
-              </Box>
-              <CircularProgress sx={{ color: 'white' }} />
-            </>
-          )}
+        : (result
+            ? (
+                renderResults()
+              )
+            : (
+                <>
+                <Box sx={{
+                  color: 'white',
+                  fontSize: '40px',
+                  height: '200px',
+                  width: '200px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  Please Wait, You are in lobby.
+                </Box>
+                <CircularProgress sx={{ color: 'white' }} />
+              </>
+              )
+          )
+      }
     </Box>
   );
 };
