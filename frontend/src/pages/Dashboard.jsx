@@ -20,9 +20,37 @@ import {
 
 const Dashboard = ({ token }) => {
   const navigate = useNavigate();
+  const [fetchState, setFetchState] = useState(false);
   const [quizList, setQuizList] = useState([]);
   const [quiz, setQuiz] = useState([]);
   const [errorMessage, setErrorMessage] = React.useState(null);
+  const [totalTime, setTotalTime] = useState({});
+
+  // Calculate each quiz total time
+  const calculateTime = async (quizID) => {
+    const response = await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        authorization: `Bearer ${localStorage.getItem('token')}`
+      },
+    });
+    const data = await response.json();
+    const countTime = data.questions.reduce((count, question) => count + question.timeLimit, 0);
+    let timeString = '0';
+    if (countTime !== 0) {
+      const min = Math.floor(countTime / 60);
+      const sec = Math.floor(countTime % 60);
+      if (min === 0) {
+        timeString = `${sec} seconds`;
+      } else if (sec === 0) {
+        timeString = `${min} minutes`;
+      } else {
+        timeString = `${min} minutes ${sec} seconds`;
+      }
+    }
+    setTotalTime(totalTime => ({ ...totalTime, [quizID]: timeString }));
+  }
 
   const fetchAllQuizzes = async () => {
     const response = await fetch('http://localhost:5005/admin/quiz/', {
@@ -33,13 +61,13 @@ const Dashboard = ({ token }) => {
       }
     });
     const data = await response.json();
-    console.log(data);
+    await data.quizzes.map((quiz) => calculateTime(quiz.id));
     setQuizList(data.quizzes);
   }
 
   useEffect(async () => {
     await fetchAllQuizzes();
-  }, []);
+  }, [fetchState]);
 
   // startQuiz popup
   const [open, setOpen] = React.useState(false);
@@ -127,12 +155,13 @@ const Dashboard = ({ token }) => {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-    await fetchAllQuizzes();
+    // fetchAllQuizzes
+    setFetchState(!fetchState);
   };
 
   return (
     <>
-      <Navbar setQuizList={setQuizList}></Navbar>
+      <Navbar fetchState={fetchState} setFetchState={setFetchState}></Navbar>
       <Dialog
         fullWidth
         maxWidth='xs'
@@ -183,7 +212,7 @@ const Dashboard = ({ token }) => {
             {errorMessage}
         </Alert>
       )}
-      <Grid container spacing={5} alignItems="flex-end">
+      <Grid container sx={{ padding: '1rem' }} spacing={3} alignItems="flex-end">
         {quizList.map((quiz, index) => (
           <Grid
             item
@@ -192,18 +221,20 @@ const Dashboard = ({ token }) => {
             sm={6}
             md={4}
           >
-            <Card sx={{ maxWidth: 345 }}>
+            <Card sx={{ maxWidth: 500 }}>
               <CardMedia
                 component="img"
                 alt="img"
-                height="140"
-                image={quiz.thumbnail}
+                height="250"
+                image={(quiz.thumbnail === null || quiz.thumbnail === '')
+                  ? 'https://t4.ftcdn.net/jpg/02/07/87/79/240_F_207877921_BtG6ZKAVvtLyc5GWpBNEIlIxsffTtWkv.jpg'
+                  : quiz.thumbnail}
               />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">{quiz.name}</Typography>
-                <Typography variant="body2" color="text.secondary">Time</Typography>
+                <Typography variant="body2" color="text.secondary">Quiz time: {totalTime[quiz.id]}</Typography>
               </CardContent>
-              <CardActions sx={{ padding: '1rem' }}>
+              <CardActions sx={{ paddingY: '1rem' }}>
                 <Button sx={{ bgcolor: '#66bb6a', color: 'white' }} onClick={() => startQuiz(quiz.id)}>Start Quiz</Button>
                 <Button sx={{ bgcolor: 'purple', color: 'white' }} onClick={() => stopQuiz(quiz.id)}>Stop Quiz</Button>
                 <Button sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={() => editQuiz(quiz.id)}>Edit Quiz</Button>

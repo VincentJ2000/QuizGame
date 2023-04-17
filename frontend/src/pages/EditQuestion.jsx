@@ -23,6 +23,7 @@ const EditQuestion = () => {
   const questionID = params.questionID;
 
   const [quizDetails, setQuizDetails] = useState({});
+  const [updateState, setUpdateState] = useState('Add');
   const [questionType, setQuestionType] = useState('SC');
   const [question, setQuestion] = useState('');
   const [answerCount, setAnswerCount] = useState(2);
@@ -45,8 +46,21 @@ const EditQuestion = () => {
       }
     });
     const data = await response.json();
-    console.log(data);
     setQuizDetails(data);
+    // Found existing question details
+    if (data.questions.length >= questionID) {
+      const currQuestion = data.questions[questionID - 1];
+      setQuestionType(currQuestion.type);
+      setQuestion(currQuestion.question);
+      setAnswerCount(currQuestion.answerList.length);
+      setAnswerList(currQuestion.answerList);
+      setTimeLimit(currQuestion.timeLimit);
+      setPoints(currQuestion.points);
+      setAttachmentType(currQuestion.attachmentType);
+      setAttachment(currQuestion.attachment);
+      setImageAttachment(currQuestion.attachment);
+      setUpdateState('Edit');
+    }
   }
 
   useEffect(async () => {
@@ -96,15 +110,19 @@ const EditQuestion = () => {
   };
 
   useEffect(() => {
-    if (imageAttachment !== '') {
-      fileToDataUrl(imageAttachment)
-        .then((data) => {
-          setAttachment(data);
-        })
-        .catch(() => {
-          alert('Base64 error.');
-          setImageAttachment('');
-        })
+    if (imageAttachment !== '' && attachmentType === 'image') {
+      const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      const validFile = validFileTypes.find((type) => type === imageAttachment.type);
+      if (validFile) {
+        fileToDataUrl(imageAttachment)
+          .then((data) => {
+            setAttachment(data);
+          })
+          .catch(() => {
+            alert('Base64 error.');
+            setImageAttachment('');
+          })
+      }
     }
   }, [imageAttachment]);
 
@@ -125,7 +143,7 @@ const EditQuestion = () => {
                   <TextField
                       required
                       id="attachment"
-                      label="Video URL"
+                      label="Embedded Video URL"
                       value={attachment}
                       onChange={(e) => setAttachment(e.target.value)}
                       type="text"
@@ -137,9 +155,9 @@ const EditQuestion = () => {
     }
   };
 
-  const addQuestion = async () => {
+  const updateQuestion = async () => {
     const newQuestion = quizDetails.questions;
-    newQuestion.push({
+    const finalQuestion = {
       id: questionID,
       type: questionType,
       question,
@@ -148,9 +166,14 @@ const EditQuestion = () => {
       points,
       attachmentType,
       attachment
-    });
+    };
+    if (updateState === 'Add') {
+      newQuestion.push(finalQuestion);
+    } else {
+      newQuestion[questionID - 1] = finalQuestion;
+    }
 
-    const response = await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
+    await fetch(`http://localhost:5005/admin/quiz/${quizID}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
@@ -162,7 +185,6 @@ const EditQuestion = () => {
         thumbnail: quizDetails.thumbnail,
       })
     });
-    console.log(response.json());
     navigate('/edit/' + quizID);
   }
 
@@ -270,9 +292,9 @@ const EditQuestion = () => {
           alignItems="center"
         >
           {answerList.map((data, index) => (
-            <Grid item xs={6} key={index}>
+            <Grid item xs={12} sm={6} key={index}>
               <Grid container spacing={1} direction="row" alignItems="center" sx={{ paddingBottom: '1rem', border: '2px solid teal' }}>
-                <Grid item xs={9} sm={10}>
+                <Grid item xs={10}>
                     <TextField
                       required
                       id={toString(data.id)}
@@ -305,7 +327,7 @@ const EditQuestion = () => {
           alignItems="center"
         >
           <Grid item><Button variant='contained' color='success' onClick={goToQuiz}>Go back to Quiz</Button></Grid>
-          <Grid item><Button variant='contained' onClick={addQuestion}>Add Question</Button></Grid>
+          <Grid item><Button variant='contained' onClick={updateQuestion}>{updateState} Question</Button></Grid>
         </Grid>
       </Container>
     </>
