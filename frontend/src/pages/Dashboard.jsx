@@ -235,10 +235,10 @@ const Dashboard = ({ token }) => {
                 <Typography variant="body2" color="text.secondary">Quiz time: {totalTime[quiz.id]}</Typography>
               </CardContent>
               <CardActions sx={{ paddingY: '1rem' }}>
-                <Button sx={{ bgcolor: '#66bb6a', color: 'white' }} onClick={() => startQuiz(quiz.id)}>Start Quiz</Button>
-                <Button sx={{ bgcolor: 'purple', color: 'white' }} onClick={() => stopQuiz(quiz.id)}>Stop Quiz</Button>
-                <Button sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={() => editQuiz(quiz.id)}>Edit Quiz</Button>
-                <Button sx={{ bgcolor: '#ef5350', color: 'white' }} onClick={() => deleteQuiz(quiz.id)}>Delete Quiz</Button>
+                <Button full='true' bgcolor='#66bb6a' color='white' size='0.8rem' onClick={() => startQuiz(quiz.id)}>Start Quiz</Button>
+                <Button full='true' bgcolor='purple' color='white' size='0.8rem' onClick={() => stopQuiz(quiz.id)}>Stop Quiz</Button>
+                <Button full='true' bgcolor='#fb8c00' color='white' size='0.8rem' onClick={() => editQuiz(quiz.id)}>Edit Quiz</Button>
+                <Button full='true' bgcolor='#ef5350' color='white' size='0.8rem' onClick={() => deleteQuiz(quiz.id)}>Delete Quiz</Button>
               </CardActions>
             </Card>
           </Grid>

@@ -22,6 +22,7 @@ const Navbar = ({ fetchState, setFetchState }) => {
   const navigate = useNavigate();
   const [gameModal, setGameModal] = useState(false);
   const [newGame, setNewGame] = useState('');
+  const [gameFile, setGameFile] = useState('');
   const [anchorElNav, setAnchorElNav] = useState(null);
 
   const handleOpenNavMenu = (event) => {
@@ -30,6 +31,14 @@ const Navbar = ({ fetchState, setFetchState }) => {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleOpenModal = () => {
+    setGameModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setGameModal(false);
   };
 
   async function logout () {
@@ -43,14 +52,6 @@ const Navbar = ({ fetchState, setFetchState }) => {
     localStorage.removeItem('token');
     navigate('/');
   }
-
-  const handleOpenModal = () => {
-    setGameModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setGameModal(false);
-  };
 
   const addQuiz = async () => {
     await fetch('http://localhost:5005/admin/quiz/new', {
@@ -77,6 +78,27 @@ const Navbar = ({ fetchState, setFetchState }) => {
 
   const joinGame = () => {
     navigate('/game');
+  };
+
+  const handleJSONfile = (e) => {
+    const fileReader = new FileReader();
+    fileReader.readAsText(e.target.files[0], 'UTF-8');
+    fileReader.onload = (event) => {
+      // Check if file is JSON
+      let isJSON = true;
+      try {
+        const file = JSON.parse(event.target.result);
+        console.log('file', file);
+        setGameFile(file);
+      } catch {
+        isJSON = false;
+        setGameFile('');
+      }
+      // Show error message
+      if (!isJSON) {
+        alert('File is not a JSON file, upload the correct format file');
+      }
+    };
   };
 
   return (
@@ -127,32 +149,41 @@ const Navbar = ({ fetchState, setFetchState }) => {
                       </MenuItem>
                   </Menu>
                 </Box>
-                <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-around' }}>
                   <Button onClick={handleOpenModal}>Create New Quiz</Button>
                   <Button onClick={joinGame}>Join Game</Button>
-                  <Button onClick={logout}>Logout</Button>
+                  <Button bgcolor='skyblue' onClick={logout}>Logout</Button>
                 </Box>
                 <Dialog open={gameModal} onClose={handleCloseModal}>
                     <DialogTitle sx={{ fontWeight: 'bold' }}>Create a New Quiz</DialogTitle>
                     <DialogContent>
                       <DialogContentText>
-                          Please enter the name of the new game you want to add.
+                          Please enter the name of the new game you want to add, or upload a JSON quiz file.
                       </DialogContentText>
                       <TextField
                           autoFocus
                           required
                           margin="dense"
                           id="name"
-                          label="Game Name"
+                          label={(gameFile !== '' ? 'JSON file provided is valid' : 'Game Name')}
                           value={newGame}
                           onChange={(e) => setNewGame(e.target.value)}
                           type="text"
-                          fullWidth
+                        Width
                           variant="standard"
+                          disabled={gameFile !== ''}
+                      />
+                      <Typography sx={{ marginTop: '1rem' }}>Upload JSON File</Typography>
+                      <input
+                        type="file"
+                        name="attachment"
+                        id="attachment"
+                        onChange={handleJSONfile}
+                        disabled={newGame !== ''}
                       />
                     </DialogContent>
-                    <DialogActions>
-                      <Button onClick={handleCloseModal}>Cancel</Button>
+                    <DialogActions sx={{ justifyContent: 'center' }}>
+                      <Button bgcolor='#ef5350' color='white' onClick={handleCloseModal}>Cancel</Button>
                       <Button onClick={addQuiz}>Add Quiz</Button>
                     </DialogActions>
                   </Dialog>
