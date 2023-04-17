@@ -237,8 +237,8 @@ const EditQuiz = () => {
                   </Grid>
                 </CardContent>
                 <CardActions sx={{ padding: '1rem', justifyContent: 'center' }}>
-                  <Button fullWidth sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={() => editQuestion(data.id)}>Edit Question</Button>
-                  <Button fullWidth sx={{ bgcolor: '#ef5350', color: 'white' }} onClick={() => deleteQuestion(data.id)}>Delete Question</Button>
+                  <Button key={data.id} fullWidth sx={{ bgcolor: '#fb8c00', color: 'white' }} onClick={() => editQuestion(data.id)}>Edit Question</Button>
+                  <Button key={data.id} fullWidth sx={{ bgcolor: '#ef5350', color: 'white' }} onClick={() => deleteQuestion(data.id)}>Delete Question</Button>
                 </CardActions>
               </Card>
             ))}

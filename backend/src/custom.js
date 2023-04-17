@@ -4,10 +4,9 @@
  to return to a "player"
 */
 export const quizQuestionPublicReturn = question => {
-  console.log('See question: ', question);
-  const playerQuestion = question;
-  delete playerQuestion['answerList'];
-  console.log('See question: ', playerQuestion);
+  const playerQuestion = { ...question };
+  const answerArray = playerQuestion.answerList.map(({ id, answer }) => ({ id, answer }));
+  playerQuestion['answerList'] = answerArray
   return playerQuestion;
 };
 
@@ -17,7 +16,8 @@ export const quizQuestionPublicReturn = question => {
 */
 export const quizQuestionGetCorrectAnswers = question => {
   // Returns an array of correct answer IDs
-  const correctAnswers = question.answerList.filter((data) => data.correct === true).map((ans) => ans.id);
+  const playerQuestion = { ...question };
+  const correctAnswers = playerQuestion.answerList.filter((data) => data.correct).map((ans) => ans.id);
   return correctAnswers; // For a single answer
 };
 
@@ -27,7 +27,8 @@ export const quizQuestionGetCorrectAnswers = question => {
 */
 export const quizQuestionGetAnswers = question => {
   // Returns an array of answer IDs
-  const answerArray = question.answerList.map((ans) => ans.id);
+  const playerQuestion = { ...question };
+  const answerArray = playerQuestion.answerList.map(({ id, answer }) => ({ id, answer }));
   return answerArray; // For a single answer
 };
 
