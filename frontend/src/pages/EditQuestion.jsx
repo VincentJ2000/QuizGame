@@ -119,7 +119,7 @@ const EditQuestion = () => {
             setAttachment(data);
           })
           .catch(() => {
-            alert('Base64 error.');
+            alert('Base64 error for file uploaded');
             setImageAttachment('');
           })
       }

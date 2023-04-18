@@ -17,6 +17,7 @@ import {
   MenuItem,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu';
+import fileToDataUrl from '../pages/helpers';
 
 const Navbar = ({ fetchState, setFetchState }) => {
   const navigate = useNavigate();
@@ -54,21 +55,53 @@ const Navbar = ({ fetchState, setFetchState }) => {
   }
 
   const addQuiz = async () => {
-    await fetch('http://localhost:5005/admin/quiz/new', {
-      method: 'POST',
+    // Check if quiz existed
+    const response = await fetch('http://localhost:5005/admin/quiz/', {
+      method: 'GET',
       headers: {
         'Content-type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify({
-        name: newGame
-      }),
+      }
     });
-    setNewGame('');
-    handleCloseModal();
-    // fetchAllQuizzes
-    if (setFetchState) {
-      setFetchState(!fetchState);
+    const data = await response.json();
+    const quizList = data.quizzes;
+    const found = quizList.filter((quiz) => quiz.name === newGame);
+
+    if (found.length > 0) {
+      alert(`${newGame} has already been created! Use other names :)`);
+    } else {
+      const newQuiz = await fetch('http://localhost:5005/admin/quiz/new', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          name: newGame
+        }),
+      });
+      const response = await newQuiz.json();
+      const newQuizID = response.quizId;
+      if (gameFile !== '') {
+        await fetch(`http://localhost:5005/admin/quiz/${newQuizID}`, {
+          method: 'PUT',
+          headers: {
+            'Content-type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify({
+            questions: gameFile.questions,
+            name: gameFile.name,
+            thumbnail: gameFile.thumbnail,
+          })
+        });
+      }
+      setNewGame('');
+      handleCloseModal();
+      // fetchAllQuizzes
+      if (setFetchState) {
+        setFetchState(!fetchState);
+      }
     }
   };
 
@@ -80,6 +113,24 @@ const Navbar = ({ fetchState, setFetchState }) => {
     navigate('/game');
   };
 
+  const checkImageFormat = (imageAttachment) => {
+    const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const validFile = validFileTypes.find((type) => type === imageAttachment.type);
+    if (validFile) {
+      fileToDataUrl(imageAttachment)
+        .then((data) => {
+          imageAttachment = data;
+        })
+        .catch(() => {
+          alert('Base64 error for file uploaded');
+          imageAttachment = '';
+        })
+    } else {
+      imageAttachment = false;
+    }
+    return imageAttachment;
+  }
+
   const handleJSONfile = (e) => {
     const fileReader = new FileReader();
     fileReader.readAsText(e.target.files[0], 'UTF-8');
@@ -88,8 +139,60 @@ const Navbar = ({ fetchState, setFetchState }) => {
       let isJSON = true;
       try {
         const file = JSON.parse(event.target.result);
-        console.log('file', file);
-        setGameFile(file);
+        // Check is JSON file contents are correct
+        let correctJSON = true;
+        if (file.name === null) {
+          correctJSON = false;
+        }
+        if (!file.thumbnail) {
+          file.thumbnail = '';
+        } else if (file.thumbnail !== '') {
+          const checkImage = checkImageFormat(file.thumbnail);
+          if (checkImage !== false) {
+            file.thumbnail = checkImage;
+          } else {
+            correctJSON = false;
+          }
+        }
+        if (!file.questions) {
+          correctJSON = false;
+        } else {
+          file.questions.map((check) => {
+            if (!(check.type === 'SC' || check.type === 'MC')) {
+              correctJSON = false;
+            }
+            if (check.question === null) {
+              correctJSON = false;
+            }
+            if (check.answerList.length < 2) {
+              correctJSON = false;
+            }
+            if (check.timeLimit % 30 !== 0) {
+              correctJSON = false;
+            }
+            if (check.points === 0 || check.points > 3) {
+              correctJSON = false;
+            }
+            if (check.attachmentType !== 'none') {
+              if (check.attachmentType === 'image') {
+                const checkImage = checkImageFormat(check.attachment);
+                if (checkImage !== false) {
+                  check.attachment = checkImage;
+                } else {
+                  correctJSON = false;
+                }
+              }
+            }
+            return correctJSON;
+          })
+        }
+
+        if (correctJSON) {
+          setGameFile(file);
+          setNewGame(file.name);
+        } else {
+          alert('JSON file uploaded contains incorrect data. Make sure to only include pictures with formats of jpeg/png/jpg.')
+        }
       } catch {
         isJSON = false;
         setGameFile('');
@@ -164,12 +267,12 @@ const Navbar = ({ fetchState, setFetchState }) => {
                           autoFocus
                           required
                           margin="dense"
+                          fullWidth
                           id="name"
                           label={(gameFile !== '' ? 'JSON file provided is valid' : 'Game Name')}
                           value={newGame}
                           onChange={(e) => setNewGame(e.target.value)}
                           type="text"
-                        Width
                           variant="standard"
                           disabled={gameFile !== ''}
                       />

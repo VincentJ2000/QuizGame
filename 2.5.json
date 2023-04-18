@@ -1,0 +1,79 @@
+{
+    "name": "Fruit Quiz",
+    "thumbnail": "",
+    "questions": [
+        {
+          "id": "1",
+          "type": "MC",
+          "question": "Which fruits are red?",
+          "answerList": [
+            {
+              "id": 1,
+              "answer": "Apple",
+              "correct": true
+            },
+            {
+              "id": 2,
+              "answer": "Lemon",
+              "correct": false
+            },
+            {
+              "id": 3,
+              "answer": "Strawberry",
+              "correct": true
+            },
+            {
+              "id": 4,
+              "answer": "Kiwi",
+              "correct": false
+            }
+          ],
+          "timeLimit": 180,
+          "points": 3,
+          "attachmentType": "none",
+          "attachment": ""
+        },
+        {
+            "id": "2",
+            "type": "SC",
+            "question": "Is tomato a fruit?",
+            "answerList": [
+              {
+                "id": 1,
+                "answer": "Yes",
+                "correct": true
+              },
+              {
+                "id": 2,
+                "answer": "No",
+                "correct": false
+              }
+            ],
+            "timeLimit": 30,
+            "points": 1,
+            "attachmentType": "none",
+            "attachment": ""
+        },
+        {
+            "id": "3",
+            "type": "SC",
+            "question": "Is there only 1 colour of apple?",
+            "answerList": [
+              {
+                "id": 1,
+                "answer": "Yes",
+                "correct": false
+              },
+              {
+                "id": 2,
+                "answer": "No",
+                "correct": true
+              }
+            ],
+            "timeLimit": 30,
+            "points": 1,
+            "attachmentType": "none",
+            "attachment": ""
+        }
+    ]
+}
