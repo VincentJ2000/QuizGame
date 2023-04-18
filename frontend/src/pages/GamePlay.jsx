@@ -295,7 +295,8 @@ const GamePlay = () => {
               display: 'flex',
               alignItems: 'center',
               flexDirection: 'column',
-              justifyContent: 'space-evenly'
+              overflowY: 'scroll',
+              gap: '20px'
             }}>
               {question &&
                 <>
@@ -303,13 +304,21 @@ const GamePlay = () => {
                   <Typography>Time remaining: {timeRemaining} seconds</Typography>
                   <Typography>{question.question.question}</Typography>
                   {question.question.attachment && (
-                    <Box sx={{ width: '30vw', height: '20vh' }}>
+                    <Box sx={{ width: '40vw', height: '40vh' }}>
                       {question.question.attachmentType === 'video'
                         ? (
-                        <video src={question.question.attachment} alt="Question attachment (video/img)" controls style={{ width: '100%', height: '100%' }} />
+                        // <video src={question.question.attachment} alt="Question attachment (video/img)" controls style={{ width: '100%', height: '100%' }} />
+                        <iframe
+                          width="100%"
+                          height="100%"
+                          src={question.question.attachment}
+                          title="Question attachment (video)"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowfullscreen
+                        />
                           )
                         : (
-                          <img src={question.question.attachment} alt="Question attachment (video/img)" style={{ width: '100%', height: '100%' }} />
+                          <img src={question.question.attachment} alt="Question attachment (img)" style={{ width: '100%', height: '100%' }} />
                           )}
                     </Box>
                   )}
