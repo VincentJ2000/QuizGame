@@ -61,7 +61,7 @@ const EditQuiz = () => {
           setPreviewThumbnail(data);
         })
         .catch(() => {
-          alert('Base64 error.');
+          alert('Base64 error for file uploaded');
           setQuizThumbnail('');
         })
     }

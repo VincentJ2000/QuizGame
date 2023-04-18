@@ -62,6 +62,7 @@ const Dashboard = ({ token }) => {
     });
     const data = await response.json();
     await data.quizzes.map((quiz) => calculateTime(quiz.id));
+    console.log('quiz', data.quizzes);
     setQuizList(data.quizzes);
   }
 
