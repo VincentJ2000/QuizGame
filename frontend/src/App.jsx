@@ -9,6 +9,8 @@ import GameScreen from './pages/GameScreen';
 import AdminScreen from './pages/AdminScreen';
 import Game from './pages/Game';
 import GamePlay from './pages/GamePlay';
+import PreviousSession from './pages/PreviousSession';
+import PreviousResult from './pages/PreviousResult';
 
 import {
   BrowserRouter,
@@ -49,6 +51,8 @@ function App () {
           <Route path="/game/admin/:sessionid/:quizid" element={<AdminScreen />} />
           <Route path="/edit/:quizID" element={<EditQuiz />} />
           <Route path="/edit/:quizID/:questionID" element={<EditQuestion />} />
+          <Route path="/previousSession/:quizID" element={<PreviousSession />} />
+          <Route path="/previousSession/:quizID/:sessionID" element={<PreviousResult />} />
           {/* <Route path="/profile/:name" element={<Profile />} /> */}
         </Routes>
       </BrowserRouter>

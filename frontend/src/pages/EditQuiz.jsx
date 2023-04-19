@@ -6,7 +6,7 @@ import {
   Typography,
   Grid,
   TextField,
-  // Button,
+  Box,
   Card,
   CardMedia,
   CardContent,
@@ -154,7 +154,10 @@ const EditQuiz = () => {
               gap: 3,
             }}
         >
-            <Typography variant="h4" component="div" align="center">Questions of {quizDetails.name}</Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button size="0.9rem" bgcolor="skyblue" onClick={() => { navigate('/dashboard') }}>Back to Dashboard</Button>
+              <Typography variant="h4" component="div" align="center">Questions of {quizDetails.name}</Typography>
+            </Box>
             <Grid container spacing={5} justifyContent="center">
                 <Grid item xs={12} sm={5}>
                     <img
@@ -194,7 +197,7 @@ const EditQuiz = () => {
                     </Grid>
                 </Grid>
             </Grid>
-            <Button full='true' bgcolor='#ef5350' color='white' onClick={addQuestion}>Add Question</Button>
+            <Button full='true' bgcolor='blue' color='white' onClick={addQuestion}>Add Question</Button>
             {questionList && questionList.map((data) => (
               <Card key={data.id} sx={{ width: '100%', marginBottom: '1rem', border: '2px solid teal' }}>
                 <CardHeader
