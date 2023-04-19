@@ -89,22 +89,19 @@ const AdminScreen = () => {
       setFinished(true);
     }
   }
-  // fetch quiz
-  const fetchQuiz = async () => {
-    const response = await fetch(`http://localhost:5005/admin/quiz/${quizId}`, {
+
+  // get results
+  async function getResult () {
+    const res = await fetch(`http://localhost:5005/admin/quiz/${quizId}`, {
       method: 'GET',
       headers: {
         'Content-type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       }
     });
-    const data = await response.json();
-    console.log(data);
-    setQuizDetails(data);
-  };
+    const details = await res.json();
+    setQuizDetails(details);
 
-  // get results
-  async function getResult () {
     const response = await fetch(`http://localhost:5005/admin/session/${sessionId}/results`, {
       method: 'GET',
       headers: {
@@ -118,7 +115,6 @@ const AdminScreen = () => {
     } else {
       setResult(data);
     }
-    fetchQuiz();
   }
 
   // get result when game is finished or stopped
@@ -158,6 +154,7 @@ const AdminScreen = () => {
             const date2 = new Date(answer.answeredAt);
             const diffSeconds = (date2 - date1) / 1000;
             questionTimeList.push(diffSeconds)
+            console.log('points', quizDetails.questions[index].points);
             if (answer.correct) {
               totalPlayerScore = totalPlayerScore + (diffSeconds * quizDetails.questions[index].points);
               // totalPlayerScore++;
