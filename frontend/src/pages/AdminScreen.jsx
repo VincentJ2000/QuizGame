@@ -24,6 +24,7 @@ const AdminScreen = () => {
   const [options, setOptions] = React.useState({});
   const [options2, setOptions2] = React.useState({});
   const [gameStatus, setGameStatus] = React.useState(0);
+  const [quizDetails, setQuizDetails] = React.useState({});
   checkToken(`/game/admin/${sessionId}/${quizId}`, true);
 
   // get game status
@@ -88,6 +89,19 @@ const AdminScreen = () => {
       setFinished(true);
     }
   }
+  // fetch quiz
+  const fetchQuiz = async () => {
+    const response = await fetch(`http://localhost:5005/admin/quiz/${quizId}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      }
+    });
+    const data = await response.json();
+    console.log(data);
+    setQuizDetails(data);
+  };
 
   // get results
   async function getResult () {
@@ -104,6 +118,7 @@ const AdminScreen = () => {
     } else {
       setResult(data);
     }
+    fetchQuiz();
   }
 
   // get result when game is finished or stopped
@@ -144,7 +159,8 @@ const AdminScreen = () => {
             const diffSeconds = (date2 - date1) / 1000;
             questionTimeList.push(diffSeconds)
             if (answer.correct) {
-              totalPlayerScore++;
+              totalPlayerScore = totalPlayerScore + (diffSeconds * quizDetails.questions[index].points);
+              // totalPlayerScore++;
               questionList.push(index + 1)
             }
           });

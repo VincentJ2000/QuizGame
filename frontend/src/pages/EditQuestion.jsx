@@ -6,7 +6,7 @@ import {
   Typography,
   Grid,
   TextField,
-  Button,
+  // Button,
   FormControlLabel,
   FormControl,
   InputLabel,
@@ -15,6 +15,7 @@ import {
   Checkbox
 } from '@mui/material'
 import fileToDataUrl from './helpers.js';
+import Button from '../components/Button';
 
 const EditQuestion = () => {
   const navigate = useNavigate();
@@ -316,8 +317,8 @@ const EditQuestion = () => {
           ))}
         </Grid>
         <Grid container spacing={2} justifyContent="center">
-          {(answerCount < 6) ? <Grid item xs={6}><Button fullWidth variant="outlined" onClick={addMoreAnswers}>Add more answers</Button></Grid> : null}
-          {(answerCount > 2) ? <Grid item xs={6}><Button fullWidth variant="outlined" color="error" onClick={delMoreAnswers}>Delete last answer option</Button></Grid> : null}
+          {(answerCount < 6) ? <Grid item xs={6}><Button full='true' border='#1876d1' bgcolor='white' color='#1876d1' size='0.9rem' onClick={addMoreAnswers}>Add more answer</Button></Grid> : null}
+          {(answerCount > 2) ? <Grid item xs={6}><Button full='true' border='#ef5350' bgcolor='white' color='#1876d1' size='0.9rem' onClick={delMoreAnswers}>Delete last answer option</Button></Grid> : null}
         </Grid>
         <Grid
           container
@@ -326,8 +327,8 @@ const EditQuestion = () => {
           justifyContent="center"
           alignItems="center"
         >
-          <Grid item><Button variant='contained' color='success' onClick={goToQuiz}>Go back to Quiz</Button></Grid>
-          <Grid item><Button variant='contained' onClick={updateQuestion}>{updateState} Question</Button></Grid>
+          <Grid item><Button size="0.9rem" bgcolor="#66bb6a" onClick={goToQuiz}>Go back to Quiz</Button></Grid>
+          <Grid item><Button size="0.9rem" bgcolor="blue" color='white' onClick={updateQuestion}>{updateState} Question</Button></Grid>
         </Grid>
       </Container>
     </>

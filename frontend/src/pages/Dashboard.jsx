@@ -160,6 +160,10 @@ const Dashboard = ({ token }) => {
     setFetchState(!fetchState);
   };
 
+  const previousSession = (quizID) => {
+    navigate('/previousSession/' + quizID);
+  }
+
   return (
     <>
       <Navbar fetchState={fetchState} setFetchState={setFetchState}></Navbar>
@@ -230,8 +234,9 @@ const Dashboard = ({ token }) => {
                 image={(quiz.thumbnail === null || quiz.thumbnail === '')
                   ? 'https://t4.ftcdn.net/jpg/02/07/87/79/240_F_207877921_BtG6ZKAVvtLyc5GWpBNEIlIxsffTtWkv.jpg'
                   : quiz.thumbnail}
+                onClick={() => previousSession(quiz.id)}
               />
-              <CardContent>
+              <CardContent onClick={() => previousSession(quiz.id)}>
                 <Typography gutterBottom variant="h5" component="div">{quiz.name}</Typography>
                 <Typography variant="body2" color="text.secondary">Quiz time: {totalTime[quiz.id]}</Typography>
               </CardContent>

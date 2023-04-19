@@ -4,7 +4,8 @@ import { checkToken } from './Refresh';
 import { Box, Typography, Button, Grid } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import CircularProgress from '@mui/material/CircularProgress';
+// import CircularProgress from '@mui/material/CircularProgress';
+import MiniGame from './MiniGame';
 
 const GamePlay = () => {
 //   const navigate = useNavigate();
@@ -348,7 +349,7 @@ const GamePlay = () => {
               )
             : (
                 <>
-                <Box sx={{
+                {/* <Box sx={{
                   color: 'white',
                   fontSize: '40px',
                   height: '200px',
@@ -357,9 +358,10 @@ const GamePlay = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                  Please Wait, You are in lobby.
+                  <Typography>Please Wait, You are in lobby.</Typography>
                 </Box>
-                <CircularProgress sx={{ color: 'white' }} />
+                <CircularProgress sx={{ color: 'white' }} /> */}
+                <MiniGame />
               </>
               )
           )
